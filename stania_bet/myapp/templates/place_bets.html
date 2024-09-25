@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/place_bets.css' %}">
+    <title>Place Bets</title>
+</head>
+<body>
+    <header>
+        <button class="hamburger-menu">
+            &#9776;
+        </button>
+        <img src="{% static 'images/logo-no-background.png' %}" alt="Logo">
+        <nav class="nav-links">
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>Welcome, {{ user.username }}!</li>
+                    <li><a href="/user/profile">User Space</a></li>
+                    <li><a href="/logout">Log Out</a></li>
+                {% else %}
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/signin">Sign In</a></li>
+                {% endif %}
+                <li><a href="/allgames">See All Games</a></li>
+                <li><a href="/bet">Bet</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Place Your Bets</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Match</th>
+                    <th>Team</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selected_matches" value="{{ match.id }}">
+                    </td>
+                    <td>{{ match.team1 }} vs {{ match.team2 }}</td>
+                    <td>
+                        <select name="team_choice_{{ match.id }}">
+                            <option value="{{ match.team1 }}">{{ match.team1 }}</option>
+                            <option value="{{ match.team2 }}">{{ match.team2 }}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="amount_{{ match.id }}" min="0" step="0.01" required>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Bet on selection</button>
+    </form>
+    <script>
+                document.querySelector('.hamburger-menu').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('show');
+            });
+    </script>
+</body>
+</html>

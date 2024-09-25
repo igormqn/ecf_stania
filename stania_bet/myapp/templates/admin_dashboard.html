@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    <title>Espace Administrateur</title>
+</head>
+<body>
+    <header>
+        <h1>Espace Administrateur</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'create_team' %}">Créer une Équipe</a></li>
+                <li><a href="{% url 'create_player' %}">Créer un Joueur</a></li>
+                <li><a href="{% url 'create_match' %}">Créer un Match</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h2>Équipes</h2>
+    <ul>
+        {% for team in teams %}
+            <li>{{ team.name }} - {{ team.city }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Joueurs</h2>
+    <ul>
+        {% for player in players %}
+            <li>{{ player.name }} - {{ player.position }} ({{ player.team }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Matches</h2>
+    <ul>
+        {% for match in matches %}
+            <li>{{ match.team_a }} vs {{ match.team_b }} le {{ match.date }} - Cotes: {{ match.odds_team_a }} / {{ match.odds_team_b }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

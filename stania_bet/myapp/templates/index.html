@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Home Page</title>
+</head>
+<body>
+    <header>
+        <button class="hamburger-menu">
+            &#9776;
+        </button>
+        <img src="{% static 'images/logo-no-background.png' %}" alt="Logo">
+        <nav class="nav-links">
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>Welcome, {{ user.username }}!</li>
+                    <li><a href="/user/profile">User Space</a></li>
+                    <li><a href="/logout">Log Out</a></li>
+                {% else %}
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/signin">Sign In</a></li>
+                {% endif %}
+                <li><a href="/allgames">See All Games</a></li>
+                <li><a href="/bet">Bet</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="presentation-image">
+        <h1>Welcome to Stania Bet: The NFL official betting website</h1>
+        <img src="{% static 'images/logo-white.png' %}" alt="">
+    </section>
+    <div class="upcoming-games">
+        <h2 class="upcoming-title">Upcoming Games</h2>
+        <div class="card-block">
+            {% for match in upcoming_matches %}
+            <a href="{% url 'game_detail' match.id %}" class="white-card-link">
+                <div class="white-card">
+                    <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
+                    <p>Date: {{ match.game_date|date:"F j, Y" }}</p>
+                    <p>Time: {{ match.start_time|date:"H:i" }}</p>
+                    <div class="match-info">
+                        <p>Additional details about the match.</p>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <p>No upcoming games.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="games-in-progress">
+        <h2 class="upcoming-title">Games In Progress</h2>
+        <div class="card-block">
+            {% for match in ongoing_matches %}
+            <a href="{% url 'game_detail' match.id %}" class="white-card-link">
+                <div class="white-card">
+                    <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
+                    <p>Date: {{ match.game_date|date:"F j, Y" }}</p>
+                    <p>Time: {{ match.start_time|date:"H:i" }}</p>
+                    <p>Score: {{ match.score_team1 }} - {{ match.score_team2 }}</p
+                        <div class="match-info">
+                            <p>Additional details about the match.</p>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <p>No games in progress.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <script>
+            document.querySelector('.hamburger-menu').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('show');
+            });
+        </script>
+    </body>
+    </html>

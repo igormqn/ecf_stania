@@ -1,0 +1,107 @@
+:root {
+    --blue: #7ca5a6;
+    --light-blue: #abe5e5;
+    --white: #ffffff;
+    --gray-light: #f4f4f4;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --text-dark: #333;
+
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--light-blue);
+    font-family: 'Lato', sans-serif;
+}
+
+header {
+    background-color: var(--blue);
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .hamburger-menu {
+    font-size: 30px;
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+}
+
+header img {
+    height: 60px;
+}
+
+header .nav-links ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+header .nav-links ul li a {
+    text-decoration: none;
+    color: var(--white);
+    font-weight: bold;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+h1 {
+    font-size: 24px;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 16px;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--gray-light);
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    align-self: center;
+}
+
+button:hover {
+    color: var(--shadow);
+}

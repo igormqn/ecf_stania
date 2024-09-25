@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/game_detail.css' %}">
+    <title>Game Detail</title>
+</head>
+<body>
+    <header>
+        <button class="hamburger-menu">
+            &#9776;
+        </button>
+        <img src="{% static 'images/logo-no-background.png' %}" alt="Logo">
+        <nav class="nav-links">
+            <ul>
+                <li><a href="/signup">Sign Up</a></li> 
+                <li><a href="/signin">Sign In</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/allgames">All Games</a></li>
+                <li><a href="/bet">Bet</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="presentation-image">
+        <h1>{{ match.team1 }} vs {{ match.team2 }}</h1>
+        <img src="{% static 'images/logo-white.png' %}" alt="">
+    </section>
+    
+    <div class="game-details">
+        <div class="white-card">
+            <h2>Match Details</h2>
+            <div class="detail-block">
+                <p><strong>Teams:</strong> {{ match.team1 }} vs {{ match.team2 }}</p>
+                <p><strong>Start Time:</strong> {{ match.start_time|date:"H:i" }}</p>
+                <p><strong>End Time:</strong> {{ match.end_time|date:"H:i" }}</p>
+                <p><strong>Status:</strong> {{ match.status }}</p>
+                
+                <h3>Team Compositions</h3>
+                <div class="player-list">
+                    <p><strong>{{ match.team1 }} Players ({{ team1_players.count }}):</strong></p>
+                    <ul>
+                        {% for player in team1_players %}
+                        <li>{{ player.number }} - {{ player.first_name }} {{ player.last_name }} ({{ player.get_position_display }})</li>
+                        {% empty %}
+                        <li>No players found.</li>
+                        {% endfor %}
+                    </ul>
+    
+                    <p><strong>{{ match.team2 }} Players ({{ team2_players.count }}):</strong></p>
+                    <ul>
+                        {% for player in team2_players %}
+                        <li>{{ player.number }} - {{ player.first_name }} {{ player.last_name }} ({{ player.get_position_display }})</li>
+                        {% empty %}
+                        <li>No players found.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+    
+                <h3>Betting Odds</h3>
+                <p><strong>{{ match.team1 }} Odds:</strong> {{ match.odds_team1 }}</p>
+                <p><strong>{{ match.team2 }} Odds:</strong> {{ match.odds_team2 }}</p>
+    
+                <h3>Weather</h3>
+                <p>{{ match.weather }}</p>
+    
+                <h3>Commentary</h3>
+                <p>{{ match.commentary }}</p>
+    
+                <h3>Score</h3>
+                <p>{{ match.team1 }}: {{ match.score_team1 }} - {{ match.team2 }}: {{ match.score_team2 }}</p>
+            </div>
+        </div>
+        
+        {% if match.status == 'Scheduled' %}
+        <div class="bet-section">
+            <h3>Place Your Bet</h3>
+            {% if user.is_authenticated %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if existing_bet %}
+                    <button type="submit">Actualiser</button>
+                {% else %}
+                    <button type="submit">Valider</button>
+                {% endif %}
+            </form>
+            {% else %}
+                <p>Vous devez être connecté pour miser.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.querySelector('.hamburger-menu').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
