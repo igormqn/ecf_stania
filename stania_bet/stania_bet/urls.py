@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/matches/today/', views.api_matches_today, name='api_matches_today'),
     path('api/matches/<int:match_id>/', views.api_match_detail, name='api_match_detail'),
     path('api/matches/<int:match_id>/update/', views.api_update_match, name='api_update_match'),
+    path('api/signup/', views.api_signup, name='api_signup'),
     path('api/login/', views.api_login, name='api_login'),
     path('api/bets/', views.api_user_bets, name='api_user_bets'),
 ]

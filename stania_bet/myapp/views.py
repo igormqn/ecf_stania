@@ -368,6 +368,37 @@ def api_matches_today(request):
     return JsonResponse([_match_to_dict(m) for m in matches], safe=False)
 
 
+@csrf_exempt
+def api_signup(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    User = get_user_model()
+    email      = body.get('email', '').strip().lower()
+    password   = body.get('password', '')
+    first_name = body.get('first_name', '').strip()
+    last_name  = body.get('last_name', '').strip()
+
+    if not email or not password or not first_name or not last_name:
+        return JsonResponse({'error': 'All fields are required.'}, status=400)
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({'error': 'This email is already in use.'}, status=400)
+    if len(password) < 8:
+        return JsonResponse({'error': 'Password must be at least 8 characters.'}, status=400)
+
+    user = User.objects.create_user(
+        email=email, password=password,
+        first_name=first_name, last_name=last_name,
+        is_active=True,
+    )
+    login(request, user)
+    return JsonResponse({'success': True, 'user_id': user.id, 'name': f'{user.first_name} {user.last_name}'})
+
+
 def api_login(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/bet.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://10.0.2.2:8000'; // Android emulator → localhost
+  static const String _baseUrl = 'http://127.0.0.1:8000';
   static String? _sessionCookie;
 
   static Future<bool> login(String email, String password) async {
@@ -50,6 +50,36 @@ class ApiService {
       return bets.firstWhere((b) => b.matchId == matchId);
     } catch (_) {
       return null;
+    }
+  }
+
+  static Future<String?> signup({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      final r = await http.post(
+        Uri.parse('$_baseUrl/api/signup/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'first_name': firstName,
+          'last_name': lastName,
+        }),
+      );
+      if (r.statusCode == 200) {
+        _sessionCookie = r.headers['set-cookie'];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('session', _sessionCookie ?? '');
+        await prefs.setString('user_name', jsonDecode(r.body)['name'] ?? '');
+        return null; // success
+      }
+      return jsonDecode(r.body)['error'] ?? 'Registration failed.';
+    } catch (_) {
+      return 'Cannot reach server.';
     }
   }
 
