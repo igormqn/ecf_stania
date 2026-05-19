@@ -60,16 +60,16 @@ class Player(models.Model):
 
 class Match(models.Model):
     STATUS_CHOICES = [
-        ('Scheduled', 'À venir'),
-        ('Ongoing', 'En Cours'),
-        ('Completed', 'Terminé'),
+        ('Scheduled', 'Upcoming'),
+        ('Ongoing', 'Ongoing'),
+        ('Completed', 'Completed'),
     ]
 
     WEATHER_CHOICES = [
-        ('Cloudy', 'Nuageux'),
-        ('Rainy', 'Pluvieux'),
-        ('Sunny', 'Ensoleillé'),
-        ('Windy', 'Venteux'),
+        ('Cloudy', 'Cloudy'),
+        ('Rainy', 'Rainy'),
+        ('Sunny', 'Sunny'),
+        ('Windy', 'Windy'),
     ]
 
     team1 = models.ForeignKey(Team, related_name='team1_matches', on_delete=models.CASCADE)
@@ -94,7 +94,7 @@ class Match(models.Model):
                 return self.team1
             elif self.score_team2 > self.score_team1:
                 return self.team2
-            return 'Égalité'
+            return 'Draw'
         return None
 
 
@@ -114,7 +114,7 @@ class Bet(models.Model):
         return f"Pari de {self.user} sur {self.team_choice} — {self.amount}€"
 
     def calculate_winnings(self):
-        """Calcule les gains/pertes une fois le match terminé."""
+        """Calculate winnings/losses once the match is completed."""
         winner = self.match.get_winner()
         if winner is None:
             return None

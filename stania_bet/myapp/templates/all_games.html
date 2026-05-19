@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Tous les matchs — Stania Bet{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/all_games.css' %}">{% endblock %}
+{% block title %}All Matches — Stania Bet{% endblock %}
+{% block extra_css %}{% endblock %}
 
 {% block content %}
-<h1>Tous les matchs</h1>
+<h1>All Matches</h1>
 
 {% if games_in_progress %}
-<h2>En cours</h2>
+<h2>Ongoing</h2>
 <table class="matches-table">
     <thead>
-        <tr><th>Équipes</th><th>Date</th><th>Début</th><th>Fin</th><th>Statut</th><th>Score</th></tr>
+        <tr><th>Teams</th><th>Date</th><th>Start</th><th>End</th><th>Status</th><th>Score</th></tr>
     </thead>
     <tbody>
         {% for match in games_in_progress %}
@@ -20,7 +20,7 @@
             <td>{{ match.game_date }}</td>
             <td>{{ match.start_time|time:"H:i" }}</td>
             <td>{{ match.end_time|time:"H:i" }}</td>
-            <td><span class="badge badge-ongoing">En Cours</span></td>
+            <td><span class="badge badge-ongoing">Ongoing</span></td>
             <td>{{ match.score_team1 }} — {{ match.score_team2 }}</td>
         </tr>
         {% endfor %}
@@ -29,10 +29,10 @@
 {% endif %}
 
 {% if upcoming_games %}
-<h2>À venir</h2>
+<h2>Upcoming</h2>
 <table class="matches-table">
     <thead>
-        <tr><th>Équipes</th><th>Date</th><th>Début</th><th>Fin</th><th>Statut</th><th>Score</th></tr>
+        <tr><th>Teams</th><th>Date</th><th>Start</th><th>End</th><th>Status</th><th>Score</th></tr>
     </thead>
     <tbody>
         {% for match in upcoming_games %}
@@ -41,7 +41,7 @@
             <td>{{ match.game_date }}</td>
             <td>{{ match.start_time|time:"H:i" }}</td>
             <td>{{ match.end_time|time:"H:i" }}</td>
-            <td><span class="badge badge-upcoming">À venir</span></td>
+            <td><span class="badge badge-upcoming">Upcoming</span></td>
             <td>—</td>
         </tr>
         {% endfor %}
@@ -50,10 +50,10 @@
 {% endif %}
 
 {% if finished_games %}
-<h2>Terminés</h2>
+<h2>Completed</h2>
 <table class="matches-table">
     <thead>
-        <tr><th>Équipes</th><th>Date</th><th>Début</th><th>Fin</th><th>Statut</th><th>Score</th></tr>
+        <tr><th>Teams</th><th>Date</th><th>Start</th><th>End</th><th>Status</th><th>Score</th></tr>
     </thead>
     <tbody>
         {% for match in finished_games %}
@@ -62,7 +62,7 @@
             <td>{{ match.game_date }}</td>
             <td>{{ match.start_time|time:"H:i" }}</td>
             <td>{{ match.end_time|time:"H:i" }}</td>
-            <td><span class="badge badge-completed">Terminé</span></td>
+            <td><span class="badge badge-completed">Completed</span></td>
             <td>{{ match.score_team1 }} — {{ match.score_team2 }}</td>
         </tr>
         {% endfor %}
@@ -71,6 +71,6 @@
 {% endif %}
 
 {% if not games_in_progress and not upcoming_games and not finished_games %}
-<p>Aucun match disponible.</p>
+<p>No matches available.</p>
 {% endif %}
 {% endblock %}

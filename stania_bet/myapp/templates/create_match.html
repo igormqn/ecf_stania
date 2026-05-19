@@ -1,27 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Planifier un match — Stania Bet{% endblock %}
+{% block title %}Schedule a match — Stania Bet{% endblock %}
 {% block content %}
-<h1>Planifier un match</h1>
+<h1>Schedule a match</h1>
 <form method="POST" class="auth-form">
     {% csrf_token %}
     {% for field in form %}
     <div class="form-group">
-        <label>{{ field.label }} :</label>{{ field }}
+        <label>{{ field.label }}:</label>{{ field }}
         {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
     </div>
     {% endfor %}
     {% if form.non_field_errors %}
         <div class="form-error">{{ form.non_field_errors.0 }}</div>
     {% endif %}
-    <button type="submit" class="btn-primary">Planifier</button>
-    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Annuler</a>
+    <button type="submit" class="btn-primary">Schedule</button>
+    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Cancel</a>
 </form>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Auto-fill end_time = start_time + 1 hour
     document.getElementById('id_start_time').addEventListener('change', function () {
         const start = this.value;
         if (!start) return;

@@ -1,40 +1,40 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Mon Espace — Stania Bet{% endblock %}
+{% block title %}My Space — Stania Bet{% endblock %}
 
 {% block extra_css %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
-<h1>Mon Espace</h1>
+<h1>My Space</h1>
 
 <div class="tabs">
     <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
-    <button class="tab-btn" data-tab="info">Mes informations</button>
-    <button class="tab-btn" data-tab="history">Historique des mises</button>
+    <button class="tab-btn" data-tab="info">My information</button>
+    <button class="tab-btn" data-tab="history">Bet history</button>
 </div>
 
 <div id="tab-dashboard" class="tab-content">
-    <h2>Gains / Pertes (matchs terminés)</h2>
+    <h2>Gains / Losses (completed matches)</h2>
     <canvas id="betChart" style="max-height:300px;"></canvas>
     <script id="history-data" type="application/json">{{ history_json|safe }}</script>
 </div>
 
 <div id="tab-info" class="tab-content" style="display:none;">
-    <h2>Mes informations</h2>
-    <p><strong>Prénom :</strong> {{ user.first_name }}</p>
-    <p><strong>Nom :</strong> {{ user.last_name }}</p>
-    <p><strong>E-mail :</strong> {{ user.email }}</p>
+    <h2>My information</h2>
+    <p><strong>First name:</strong> {{ user.first_name }}</p>
+    <p><strong>Last name:</strong> {{ user.last_name }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
 </div>
 
 <div id="tab-history" class="tab-content" style="display:none;">
-    <h2>Historique des mises</h2>
-    <a href="{% url 'bet_history' %}" class="btn-secondary">Voir le détail complet</a>
+    <h2>Bet history</h2>
+    <a href="{% url 'bet_history' %}" class="btn-secondary">View full details</a>
     <table class="matches-table" style="margin-top:1rem;">
         <thead>
-            <tr><th>Match</th><th>Équipe</th><th>Montant</th><th>Date</th><th>Résultat</th></tr>
+            <tr><th>Match</th><th>Team</th><th>Amount</th><th>Date</th><th>Result</th></tr>
         </thead>
         <tbody>
             {% for bet in bets %}
@@ -58,7 +58,7 @@
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="5">Aucune mise enregistrée.</td></tr>
+            <tr><td colspan="5">No bets recorded.</td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -67,7 +67,6 @@
 
 {% block extra_js %}
 <script>
-    // Tabs
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -77,7 +76,6 @@
         });
     });
 
-    // Chart
     const raw = JSON.parse(document.getElementById('history-data').textContent);
     if (raw.length > 0) {
         const labels = raw.map(d => d.date);
@@ -87,7 +85,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Gains/Pertes (€)',
+                    label: 'Gains/Losses (€)',
                     data: amounts,
                     borderColor: '#e63946',
                     backgroundColor: 'rgba(230,57,70,0.1)',

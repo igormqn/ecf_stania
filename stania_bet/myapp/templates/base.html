@@ -1,35 +1,39 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_css %}{% endblock %}
     <title>{% block title %}Stania Bet{% endblock %}</title>
 </head>
 <body>
+
 <header class="site-header">
-    <button class="hamburger-menu" aria-label="Menu">&#9776;</button>
     <a href="{% url 'home' %}">
         <img src="{% static 'images/logo-no-background.png' %}" alt="Stania Bet" class="logo">
     </a>
     <nav class="nav-links">
         <ul>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'user_space' %}">Mon Espace</a></li>
-                <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+                <li><a href="{% url 'user_space' %}">My Space</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
             {% else %}
-                <li><a href="{% url 'signup' %}">S'inscrire</a></li>
-                <li><a href="{% url 'signin' %}">Se connecter</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                <li><a href="{% url 'signin' %}">Sign In</a></li>
             {% endif %}
-            <li><a href="{% url 'all_games' %}">Tous les matchs</a></li>
-            <li><a href="{% url 'place_bets' %}">Parier</a></li>
+            <li><a href="{% url 'all_games' %}">All Matches</a></li>
+            <li><a href="{% url 'place_bets' %}">Bet Now</a></li>
             {% if user.is_staff %}
-                <li><a href="{% url 'admin_dashboard' %}">Administration</a></li>
+                <li><a href="{% url 'admin_dashboard' %}">Admin</a></li>
             {% endif %}
         </ul>
     </nav>
+    <button class="hamburger-menu" aria-label="Menu">&#9776;</button>
 </header>
 
 {% if messages %}
@@ -45,7 +49,7 @@
 </main>
 
 <footer class="site-footer">
-    <p>&copy; 2024 Stania Bet — Super Bowl Official Partner</p>
+    <p>&copy; 2025 Stania Bet &mdash; The Official Super Bowl Betting Platform</p>
 </footer>
 
 <script>

@@ -104,7 +104,7 @@ class MatchModelTest(TestCase):
         self.match.score_team1 = 14
         self.match.score_team2 = 14
         self.match.save()
-        self.assertEqual(self.match.get_winner(), 'Égalité')
+        self.assertEqual(self.match.get_winner(), 'Draw')
 
 
 class BetCalculateWinningsTest(TestCase):

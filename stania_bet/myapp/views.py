@@ -23,7 +23,7 @@ def is_admin(user):
     return user.is_staff
 
 
-# ─── Pages publiques ────────────────────────────────────────────────────────
+# ─── Public pages ───────────────────────────────────────────────────────────
 
 def home(request):
     today = timezone.now().date()
@@ -56,7 +56,7 @@ def game_detail(request, match_id):
 
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            messages.error(request, "Vous devez être connecté pour miser.")
+            messages.error(request, "You must be signed in to place a bet.")
             return redirect('signin')
 
         form = BetForm(match=match, data=request.POST)
@@ -67,12 +67,12 @@ def game_detail(request, match_id):
             if existing_bet:
                 if amount == 0:
                     existing_bet.delete()
-                    messages.success(request, "Votre mise a été supprimée.")
+                    messages.success(request, "Your bet has been removed.")
                 else:
                     existing_bet.amount = amount
                     existing_bet.team_choice = team_choice
                     existing_bet.save()
-                    messages.success(request, "Votre mise a été mise à jour.")
+                    messages.success(request, "Your bet has been updated.")
             else:
                 Bet.objects.create(
                     user=request.user,
@@ -80,7 +80,7 @@ def game_detail(request, match_id):
                     team_choice=team_choice,
                     amount=amount,
                 )
-                messages.success(request, "Votre mise a été enregistrée.")
+                messages.success(request, "Your bet has been placed.")
             return redirect('game_detail', match_id=match.id)
     else:
         initial = {}
@@ -97,7 +97,7 @@ def game_detail(request, match_id):
     })
 
 
-# ─── Paris (US5 / US6) ──────────────────────────────────────────────────────
+# ─── Betting (US5 / US6) ────────────────────────────────────────────────────
 
 def place_bets(request):
     matches = Match.objects.filter(status='Scheduled').order_by('game_date', 'start_time')
@@ -153,7 +153,7 @@ def confirm_bets(request):
             except (Match.DoesNotExist, Team.DoesNotExist, ValueError):
                 continue
         del request.session['pending_bets']
-        messages.success(request, "Vos paris ont été enregistrés !")
+        messages.success(request, "Your bets have been confirmed!")
         return redirect('user_space')
 
     return render(request, 'confirm_bets.html', {'bets_data': bets_data})
@@ -163,7 +163,7 @@ def bet_success(request):
     return render(request, 'bet_success.html')
 
 
-# ─── Espace utilisateur ──────────────────────────────────────────────────────
+# ─── User space ─────────────────────────────────────────────────────────────
 
 @login_required
 def user_space(request):
@@ -193,9 +193,9 @@ def delete_bet(request, bet_id):
     bet = get_object_or_404(Bet, id=bet_id, user=request.user)
     if bet.match.status == 'Scheduled':
         bet.delete()
-        messages.success(request, "Mise supprimée.")
+        messages.success(request, "Bet deleted.")
     else:
-        messages.error(request, "Impossible de supprimer cette mise.")
+        messages.error(request, "This bet cannot be deleted.")
     return redirect('bet_history')
 
 
@@ -203,12 +203,12 @@ def delete_bet(request, bet_id):
 def update_bet(request, bet_id):
     bet = get_object_or_404(Bet, id=bet_id, user=request.user)
     if bet.match.status != 'Scheduled':
-        messages.error(request, "Ce match a déjà commencé.")
+        messages.error(request, "This match has already started.")
         return redirect('bet_history')
     return redirect('game_detail', match_id=bet.match.id)
 
 
-# ─── Authentification ────────────────────────────────────────────────────────
+# ─── Authentication ─────────────────────────────────────────────────────────
 
 def signup(request):
     if request.method == 'POST':
@@ -217,13 +217,13 @@ def signup(request):
             user = form.save()
             link = request.build_absolute_uri(f'/activate/{user.id}/')
             send_mail(
-                'Confirmez votre inscription — Stania Bet',
-                f'Bonjour {user.first_name},\n\nCliquez sur ce lien pour activer votre compte :\n{link}',
+                'Confirm your registration — Stania Bet',
+                f'Hello {user.first_name},\n\nClick this link to activate your account:\n{link}',
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email],
                 fail_silently=True,
             )
-            messages.success(request, "Un e-mail de confirmation a été envoyé.")
+            messages.success(request, "A confirmation email has been sent.")
             return redirect('signin')
     else:
         form = SignUpForm()
@@ -234,7 +234,7 @@ def activate_account(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user.is_active = True
     user.save()
-    messages.success(request, "Votre compte est activé. Vous pouvez vous connecter.")
+    messages.success(request, "Your account is activated. You can now sign in.")
     return redirect('signin')
 
 
@@ -250,7 +250,7 @@ def signin(request):
             if user.must_change_password:
                 return redirect('password_change')
             return redirect(request.GET.get('next', 'home'))
-        messages.error(request, "Email ou mot de passe incorrect.")
+        messages.error(request, "Email or password incorrect.")
     return render(request, 'signin.html')
 
 
@@ -269,9 +269,9 @@ def password_change(request):
             request.user.set_password(new_pwd)
             request.user.must_change_password = False
             request.user.save()
-            messages.success(request, "Mot de passe changé. Reconnectez-vous.")
+            messages.success(request, "Password changed. Please sign in again.")
             return redirect('signin')
-        messages.error(request, "Les mots de passe ne correspondent pas.")
+        messages.error(request, "Passwords do not match.")
     return render(request, 'password_change.html')
 
 
@@ -287,20 +287,20 @@ def password_reset(request):
             user.must_change_password = True
             user.save()
             send_mail(
-                'Votre nouveau mot de passe — Stania Bet',
-                f'Votre nouveau mot de passe temporaire : {new_password}\n\nChangez-le dès votre prochaine connexion.',
+                'Your new password — Stania Bet',
+                f'Your temporary password: {new_password}\n\nPlease change it on your next login.',
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email],
                 fail_silently=True,
             )
-            messages.success(request, "Un nouveau mot de passe vous a été envoyé par e-mail.")
+            messages.success(request, "A new password has been sent to your email.")
             return redirect('signin')
     else:
         form = PasswordResetForm()
     return render(request, 'password_reset.html', {'form': form})
 
 
-# ─── Espace Administrateur ──────────────────────────────────────────────────
+# ─── Admin space ────────────────────────────────────────────────────────────
 
 @login_required
 @user_passes_test(is_admin)
@@ -318,7 +318,7 @@ def create_team(request):
     form = TeamForm(request.POST or None)
     if form.is_valid():
         form.save()
-        messages.success(request, "Équipe créée.")
+        messages.success(request, "Team created.")
         return redirect('admin_dashboard')
     return render(request, 'create_team.html', {'form': form})
 
@@ -329,7 +329,7 @@ def create_player(request):
     form = PlayerForm(request.POST or None)
     if form.is_valid():
         form.save()
-        messages.success(request, "Joueur créé.")
+        messages.success(request, "Player created.")
         return redirect('admin_dashboard')
     return render(request, 'create_player.html', {'form': form})
 
@@ -340,12 +340,12 @@ def create_match(request):
     form = MatchForm(request.POST or None)
     if form.is_valid():
         form.save()
-        messages.success(request, "Match planifié.")
+        messages.success(request, "Match scheduled.")
         return redirect('admin_dashboard')
     return render(request, 'create_match.html', {'form': form})
 
 
-# ─── API REST (pour l'app mobile et bureautique) ────────────────────────────
+# ─── REST API (for mobile & desktop apps) ───────────────────────────────────
 
 @require_GET
 def api_matches(request):
@@ -374,14 +374,14 @@ def api_login(request):
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'JSON invalide'}, status=400)
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
     email = body.get('email', '')
     password = body.get('password', '')
     user = authenticate(request, username=email, password=password)
     if user:
         login(request, user)
         return JsonResponse({'success': True, 'user_id': user.id, 'name': f'{user.first_name} {user.last_name}'})
-    return JsonResponse({'error': 'Identifiants incorrects'}, status=401)
+    return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
 
 @login_required
@@ -393,14 +393,14 @@ def api_user_bets(request):
 
 @csrf_exempt
 def api_update_match(request, match_id):
-    """Endpoint pour le commentateur : démarrer, ajouter commentaire/score, fermer un match."""
+    """Commentator endpoint: start, add commentary/score, close a match."""
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)
     match = get_object_or_404(Match, id=match_id)
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'JSON invalide'}, status=400)
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     action = body.get('action')
     if action == 'start':
@@ -421,18 +421,19 @@ def api_update_match(request, match_id):
         match.status = 'Completed'
         match.end_time = timezone.now().time()
         match.save()
-        # Calculer les gains de chaque parieur
+        # Calculate winnings for each bettor
         for bet in match.bets.all():
             w = bet.calculate_winnings()
             bet.winnings = w
             bet.save()
     else:
-        return JsonResponse({'error': 'Action inconnue'}, status=400)
+        return JsonResponse({'error': 'Unknown action'}, status=400)
 
     return JsonResponse({'success': True, 'match': _match_to_dict(match)})
 
 
 # ─── Helpers ────────────────────────────────────────────────────────────────
+
 
 def _match_to_dict(match, detail=False):
     d = {

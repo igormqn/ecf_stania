@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Confirmation des paris — Stania Bet{% endblock %}
+{% block title %}Confirm Bets — Stania Bet{% endblock %}
 
 {% block content %}
-<h1>Confirmation de vos paris</h1>
-<p>Veuillez vérifier vos sélections avant de valider.</p>
+<h1>Confirm your bets</h1>
+<p>Please review your selection before confirming.</p>
 
 <form method="POST">
     {% csrf_token %}
     <input type="hidden" name="confirmed" value="1">
     <table class="matches-table">
         <thead>
-            <tr><th>Match</th><th>Équipe choisie</th><th>Montant (€)</th></tr>
+            <tr><th>Match</th><th>Team chosen</th><th>Amount (€)</th></tr>
         </thead>
         <tbody>
             {% for item in bets_data %}
@@ -22,15 +22,15 @@
                 <td>{{ item.amount }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">Aucun pari sélectionné.</td></tr>
+            <tr><td colspan="3">No bets selected.</td></tr>
             {% endfor %}
         </tbody>
     </table>
     {% if bets_data %}
-    <button type="submit" class="btn-primary" onclick="return confirm('Confirmer tous vos paris ?')">
-        Valider ma sélection
+    <button type="submit" class="btn-primary" onclick="return confirm('Confirm all your bets?')">
+        Confirm selection
     </button>
     {% endif %}
-    <a href="{% url 'place_bets' %}" class="btn-secondary">Modifier</a>
+    <a href="{% url 'place_bets' %}" class="btn-secondary">Edit</a>
 </form>
 {% endblock %}

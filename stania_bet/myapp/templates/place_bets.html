@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Parier — Stania Bet{% endblock %}
+{% block title %}Bet — Stania Bet{% endblock %}
 
 {% block content %}
-<h1>Parier sur des matchs</h1>
-<p>Sélectionnez les matchs sur lesquels vous souhaitez miser, choisissez votre équipe et votre montant.</p>
+<h1>Bet on matches</h1>
+<p>Select the matches you want to bet on, choose your team and your stake.</p>
 
 <form method="POST" id="bets-form">
     {% csrf_token %}
@@ -13,12 +13,12 @@
     <table class="matches-table">
         <thead>
             <tr>
-                <th>Sélection</th>
+                <th>Select</th>
                 <th>Match</th>
-                <th>Date / Heure</th>
-                <th>Cotes</th>
-                <th>Équipe choisie</th>
-                <th>Montant (€)</th>
+                <th>Date / Time</th>
+                <th>Odds</th>
+                <th>Team</th>
+                <th>Amount (€)</th>
             </tr>
         </thead>
         <tbody>
@@ -42,9 +42,9 @@
             {% endfor %}
         </tbody>
     </table>
-    <button type="submit" class="btn-primary">Miser sur la sélection</button>
+    <button type="submit" class="btn-primary">Bet on selection</button>
     {% else %}
-    <p>Aucun match disponible pour parier actuellement.</p>
+    <p>No matches available to bet on right now.</p>
     {% endif %}
 </form>
 {% endblock %}

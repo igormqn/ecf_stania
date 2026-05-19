@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Créer un joueur — Stania Bet{% endblock %}
+{% block title %}Create a player — Stania Bet{% endblock %}
 {% block content %}
-<h1>Créer un joueur</h1>
+<h1>Create a player</h1>
 <form method="POST" class="auth-form">
     {% csrf_token %}
     {% for field in form %}
     <div class="form-group">
-        <label>{{ field.label }} :</label>{{ field }}
+        <label>{{ field.label }}:</label>{{ field }}
         {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
     </div>
     {% endfor %}
-    <button type="submit" class="btn-primary">Créer</button>
-    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Annuler</a>
+    <button type="submit" class="btn-primary">Create</button>
+    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Cancel</a>
 </form>
 {% endblock %}

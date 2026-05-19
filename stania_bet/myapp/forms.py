@@ -6,8 +6,8 @@ User = get_user_model()
 
 
 class SignUpForm(forms.ModelForm):
-    password1 = forms.CharField(label='Mot de passe', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmer le mot de passe', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -16,7 +16,7 @@ class SignUpForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Cet e-mail est déjà utilisé.")
+            raise forms.ValidationError("This email is already in use.")
         return email
 
     def clean(self):
@@ -24,7 +24,7 @@ class SignUpForm(forms.ModelForm):
         p1 = cleaned_data.get('password1')
         p2 = cleaned_data.get('password2')
         if p1 and p2 and p1 != p2:
-            raise forms.ValidationError("Les mots de passe ne correspondent pas.")
+            raise forms.ValidationError("Passwords do not match.")
         return cleaned_data
 
     def save(self, commit=True):
@@ -41,11 +41,11 @@ class SignUpForm(forms.ModelForm):
 class BetForm(forms.Form):
     amount = forms.DecimalField(
         max_digits=10, decimal_places=2, min_value=0,
-        label='Montant (€)', required=True
+        label='Amount (€)', required=True
     )
     team_choice = forms.ModelChoiceField(
         queryset=Team.objects.none(),
-        label='Équipe choisie', required=True
+        label='Chosen team', required=True
     )
 
     def __init__(self, match=None, *args, **kwargs):
@@ -57,15 +57,15 @@ class BetForm(forms.Form):
 
 
 class PasswordResetForm(forms.Form):
-    last_name = forms.CharField(max_length=150, label='Nom de famille')
-    email = forms.EmailField(label='E-mail')
+    last_name = forms.CharField(max_length=150, label='Last name')
+    email = forms.EmailField(label='Email')
 
     def clean(self):
         cleaned_data = super().clean()
         last_name = cleaned_data.get('last_name')
         email = cleaned_data.get('email')
         if not User.objects.filter(last_name=last_name, email=email).exists():
-            raise forms.ValidationError("Aucun utilisateur trouvé avec ces informations.")
+            raise forms.ValidationError("No account found with these details.")
         return cleaned_data
 
 
@@ -73,7 +73,7 @@ class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ['name', 'city']
-        labels = {'name': 'Nom de l\'équipe', 'city': 'Ville / Pays'}
+        labels = {'name': 'Team name', 'city': 'City / Country'}
 
 
 class PlayerForm(forms.ModelForm):
@@ -81,11 +81,11 @@ class PlayerForm(forms.ModelForm):
         model = Player
         fields = ['first_name', 'last_name', 'number', 'position', 'team']
         labels = {
-            'first_name': 'Prénom',
-            'last_name': 'Nom',
-            'number': 'Numéro',
-            'position': 'Poste',
-            'team': 'Équipe',
+            'first_name': 'First name',
+            'last_name': 'Last name',
+            'number': 'Number',
+            'position': 'Position',
+            'team': 'Team',
         }
 
 
@@ -94,14 +94,14 @@ class MatchForm(forms.ModelForm):
         model = Match
         fields = ['team1', 'team2', 'game_date', 'start_time', 'end_time', 'odds_team1', 'odds_team2', 'weather']
         labels = {
-            'team1': 'Équipe 1',
-            'team2': 'Équipe 2',
-            'game_date': 'Date du match',
-            'start_time': 'Heure de début',
-            'end_time': 'Heure de fin',
-            'odds_team1': 'Cote Équipe 1',
-            'odds_team2': 'Cote Équipe 2',
-            'weather': 'Météo',
+            'team1': 'Team 1',
+            'team2': 'Team 2',
+            'game_date': 'Match date',
+            'start_time': 'Start time',
+            'end_time': 'End time',
+            'odds_team1': 'Team 1 odds',
+            'odds_team2': 'Team 2 odds',
+            'weather': 'Weather',
         }
         widgets = {
             'game_date': forms.DateInput(attrs={'type': 'date'}),
@@ -114,17 +114,17 @@ class MatchForm(forms.ModelForm):
         team1 = cleaned_data.get('team1')
         team2 = cleaned_data.get('team2')
         if team1 and team2 and team1 == team2:
-            raise forms.ValidationError("Les deux équipes doivent être différentes.")
+            raise forms.ValidationError("Both teams must be different.")
         start = cleaned_data.get('start_time')
         end = cleaned_data.get('end_time')
         if start and end and start >= end:
-            raise forms.ValidationError("L'heure de fin doit être après l'heure de début.")
+            raise forms.ValidationError("End time must be after start time.")
         return cleaned_data
 
 
 class CommentaryForm(forms.Form):
     commentary = forms.CharField(
-        label='Commentaire', widget=forms.Textarea(attrs={'rows': 3}), required=True
+        label='Commentary', widget=forms.Textarea(attrs={'rows': 3}), required=True
     )
-    score_team1 = forms.IntegerField(label='Score Équipe 1', min_value=0, required=False)
-    score_team2 = forms.IntegerField(label='Score Équipe 2', min_value=0, required=False)
+    score_team1 = forms.IntegerField(label='Team 1 score', min_value=0, required=False)
+    score_team2 = forms.IntegerField(label='Team 2 score', min_value=0, required=False)

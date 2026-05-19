@@ -1,45 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Accueil — Stania Bet{% endblock %}
+{% block title %}Home — Stania Bet{% endblock %}
 
 {% block content %}
 <section class="hero">
-    <h1>Bienvenue sur Stania Bet</h1>
-    <p>Le site officiel de paris sportifs du Super Bowl. Misez sur vos équipes favorites !</p>
+    <h1>Welcome to Stania Bet</h1>
+    <p>The official Super Bowl sports betting platform. Bet on your favourite teams!</p>
     <img src="{% static 'images/logo-white.png' %}" alt="Super Bowl">
 </section>
 
 <section class="home-matches">
-    <h2>Matchs en cours aujourd'hui</h2>
+    <h2>Ongoing matches today</h2>
     <div class="card-block">
         {% for match in ongoing_matches %}
         <a href="{% url 'game_detail' match.id %}" class="white-card-link">
             <div class="white-card ongoing">
-                <span class="badge badge-ongoing">En Cours</span>
+                <span class="badge badge-ongoing">Ongoing</span>
                 <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
                 <p>{{ match.game_date }} | {{ match.start_time|time:"H:i" }} — {{ match.end_time|time:"H:i" }}</p>
                 <p class="score">{{ match.score_team1 }} — {{ match.score_team2 }}</p>
             </div>
         </a>
         {% empty %}
-        <p>Aucun match en cours.</p>
+        <p>No matches currently ongoing.</p>
         {% endfor %}
     </div>
 
-    <h2>Matchs à venir aujourd'hui</h2>
+    <h2>Upcoming matches today</h2>
     <div class="card-block">
         {% for match in upcoming_matches %}
         <a href="{% url 'game_detail' match.id %}" class="white-card-link">
             <div class="white-card">
-                <span class="badge badge-upcoming">À venir</span>
+                <span class="badge badge-upcoming">Upcoming</span>
                 <h3>{{ match.team1 }} vs {{ match.team2 }}</h3>
                 <p>{{ match.start_time|time:"H:i" }} — {{ match.end_time|time:"H:i" }}</p>
-                <p>Cotes : {{ match.odds_team1 }} / {{ match.odds_team2 }}</p>
+                <p>Odds: {{ match.odds_team1 }} / {{ match.odds_team2 }}</p>
             </div>
         </a>
         {% empty %}
-        <p>Aucun match à venir aujourd'hui.</p>
+        <p>No upcoming matches today.</p>
         {% endfor %}
     </div>
 </section>

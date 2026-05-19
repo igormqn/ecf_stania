@@ -2,46 +2,46 @@
 {% load static %}
 
 {% block title %}{{ match.team1 }} vs {{ match.team2 }} — Stania Bet{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/game_detail.css' %}">{% endblock %}
+{% block extra_css %}{% endblock %}
 
 {% block content %}
 <div class="game-details">
     <h1>{{ match.team1 }} vs {{ match.team2 }}</h1>
 
     <div class="white-card">
-        <h2>Informations du match</h2>
-        <p><strong>Date :</strong> {{ match.game_date }}</p>
-        <p><strong>Début :</strong> {{ match.start_time|time:"H:i" }} &nbsp;|&nbsp; <strong>Fin :</strong> {{ match.end_time|time:"H:i" }}</p>
-        <p><strong>Statut :</strong>
-            {% if match.status == 'Ongoing' %}<span class="badge badge-ongoing">En Cours</span>
-            {% elif match.status == 'Completed' %}<span class="badge badge-completed">Terminé</span>
-            {% else %}<span class="badge badge-upcoming">À venir</span>{% endif %}
+        <h2>Match information</h2>
+        <p><strong>Date:</strong> {{ match.game_date }}</p>
+        <p><strong>Start:</strong> {{ match.start_time|time:"H:i" }} &nbsp;|&nbsp; <strong>End:</strong> {{ match.end_time|time:"H:i" }}</p>
+        <p><strong>Status:</strong>
+            {% if match.status == 'Ongoing' %}<span class="badge badge-ongoing">Ongoing</span>
+            {% elif match.status == 'Completed' %}<span class="badge badge-completed">Completed</span>
+            {% else %}<span class="badge badge-upcoming">Upcoming</span>{% endif %}
         </p>
-        <p><strong>Météo :</strong> {{ match.get_weather_display }}</p>
+        <p><strong>Weather:</strong> {{ match.get_weather_display }}</p>
 
         {% if match.status != 'Scheduled' %}
-        <p><strong>Score :</strong> {{ match.team1 }} {{ match.score_team1 }} — {{ match.score_team2 }} {{ match.team2 }}</p>
+        <p><strong>Score:</strong> {{ match.team1 }} {{ match.score_team1 }} — {{ match.score_team2 }} {{ match.team2 }}</p>
         {% endif %}
     </div>
 
     <div class="white-card">
-        <h2>Compositions</h2>
+        <h2>Rosters</h2>
         <div class="player-columns">
             <div>
-                <h3>{{ match.team1 }} ({{ team1_players.count }} joueurs)</h3>
+                <h3>{{ match.team1 }} ({{ team1_players.count }} players)</h3>
                 <ul>
                     {% for player in team1_players %}
                     <li>#{{ player.number }} {{ player.first_name }} {{ player.last_name }} — {{ player.get_position_display }}</li>
-                    {% empty %}<li>Aucun joueur enregistré.</li>
+                    {% empty %}<li>No players registered.</li>
                     {% endfor %}
                 </ul>
             </div>
             <div>
-                <h3>{{ match.team2 }} ({{ team2_players.count }} joueurs)</h3>
+                <h3>{{ match.team2 }} ({{ team2_players.count }} players)</h3>
                 <ul>
                     {% for player in team2_players %}
                     <li>#{{ player.number }} {{ player.first_name }} {{ player.last_name }} — {{ player.get_position_display }}</li>
-                    {% empty %}<li>Aucun joueur enregistré.</li>
+                    {% empty %}<li>No players registered.</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -49,44 +49,44 @@
     </div>
 
     <div class="white-card">
-        <h2>Cotes</h2>
-        <p>{{ match.team1 }} : <strong>{{ match.odds_team1 }}</strong> &nbsp;|&nbsp; {{ match.team2 }} : <strong>{{ match.odds_team2 }}</strong></p>
+        <h2>Odds</h2>
+        <p>{{ match.team1 }}: <strong>{{ match.odds_team1 }}</strong> &nbsp;|&nbsp; {{ match.team2 }}: <strong>{{ match.odds_team2 }}</strong></p>
     </div>
 
     {% if match.commentary %}
     <div class="white-card">
-        <h2>Commentaires</h2>
+        <h2>Commentary</h2>
         <pre class="commentary">{{ match.commentary }}</pre>
     </div>
     {% endif %}
 
     {% if match.status == 'Scheduled' %}
     <div class="white-card bet-section">
-        <h2>Placer une mise</h2>
+        <h2>Place a bet</h2>
         {% if user.is_authenticated %}
         <form method="POST">
             {% csrf_token %}
-            <p><strong>Cotes :</strong> {{ match.team1 }} × {{ match.odds_team1 }} &nbsp;|&nbsp; {{ match.team2 }} × {{ match.odds_team2 }}</p>
+            <p><strong>Odds:</strong> {{ match.team1 }} × {{ match.odds_team1 }} &nbsp;|&nbsp; {{ match.team2 }} × {{ match.odds_team2 }}</p>
             <div class="form-group">
-                <label>{{ form.team_choice.label }} :</label>
+                <label>{{ form.team_choice.label }}:</label>
                 {{ form.team_choice }}
             </div>
             <div class="form-group">
-                <label>{{ form.amount.label }} :</label>
+                <label>{{ form.amount.label }}:</label>
                 {{ form.amount }}
             </div>
             {% if form.errors %}
                 <div class="form-error">{{ form.errors }}</div>
             {% endif %}
             {% if existing_bet %}
-                <button type="submit" class="btn-primary">Actualiser la mise</button>
-                <small>(Entrez 0 pour supprimer votre mise)</small>
+                <button type="submit" class="btn-primary">Update my bet</button>
+                <small>(Enter 0 to remove your bet)</small>
             {% else %}
-                <button type="submit" class="btn-primary">Valider la mise</button>
+                <button type="submit" class="btn-primary">Place bet</button>
             {% endif %}
         </form>
         {% else %}
-        <p>Vous devez être <a href="{% url 'signin' %}?next={{ request.path }}">connecté</a> pour miser.</p>
+        <p>You must be <a href="{% url 'signin' %}?next={{ request.path }}">signed in</a> to place a bet.</p>
         {% endif %}
     </div>
     {% endif %}

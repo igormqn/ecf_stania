@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Historique des mises — Stania Bet{% endblock %}
+{% block title %}Bet History — Stania Bet{% endblock %}
 
 {% block content %}
-<h1>Historique de mes mises</h1>
+<h1>My bet history</h1>
 
 <table class="matches-table">
     <thead>
         <tr>
-            <th>Équipes</th>
-            <th>Date du match</th>
-            <th>Début</th>
-            <th>Fin</th>
-            <th>Mon équipe</th>
-            <th>Montant</th>
-            <th>Mise le</th>
-            <th>Résultat</th>
+            <th>Teams</th>
+            <th>Match date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>My team</th>
+            <th>Amount</th>
+            <th>Placed on</th>
+            <th>Result</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -29,7 +29,7 @@
             <td>{{ bet.match.end_time|time:"H:i" }}</td>
             <td>{{ bet.team_choice }}</td>
             <td>{{ bet.amount }} €</td>
-            <td>{{ bet.created_at|date:"d/m/Y" }}</td>
+            <td>{{ bet.created_at|date:"m/d/Y" }}</td>
             <td>
                 {% if bet.match.status == 'Completed' %}
                     {% if bet.winnings is not None %}
@@ -45,20 +45,20 @@
             </td>
             <td>
                 {% if bet.match.status == 'Scheduled' %}
-                <a href="{% url 'update_bet' bet.id %}" class="btn-secondary btn-sm">Modifier</a>
+                <a href="{% url 'update_bet' bet.id %}" class="btn-secondary btn-sm">Edit</a>
                 <form method="POST" action="{% url 'delete_bet' bet.id %}" style="display:inline;"
-                      onsubmit="return confirm('Supprimer cette mise ?')">
+                      onsubmit="return confirm('Delete this bet?')">
                     {% csrf_token %}
-                    <button type="submit" class="btn-danger btn-sm">Supprimer</button>
+                    <button type="submit" class="btn-danger btn-sm">Delete</button>
                 </form>
                 {% else %}—{% endif %}
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="9">Aucune mise enregistrée.</td></tr>
+        <tr><td colspan="9">No bets recorded.</td></tr>
         {% endfor %}
     </tbody>
 </table>
 
-<a href="{% url 'user_space' %}" class="btn-secondary">← Retour à mon espace</a>
+<a href="{% url 'user_space' %}" class="btn-secondary">← Back to my space</a>
 {% endblock %}

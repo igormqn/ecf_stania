@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Espace Administrateur — Stania Bet{% endblock %}
+{% block title %}Admin Dashboard — Stania Bet{% endblock %}
 
 {% block content %}
-<h1>Espace Administrateur</h1>
+<h1>Admin Dashboard</h1>
 <div class="admin-actions">
-    <a href="{% url 'create_team' %}" class="btn-primary">+ Créer une équipe</a>
-    <a href="{% url 'create_player' %}" class="btn-primary">+ Créer un joueur</a>
-    <a href="{% url 'create_match' %}" class="btn-primary">+ Planifier un match</a>
+    <a href="{% url 'create_team' %}" class="btn-primary">+ Create a team</a>
+    <a href="{% url 'create_player' %}" class="btn-primary">+ Create a player</a>
+    <a href="{% url 'create_match' %}" class="btn-primary">+ Schedule a match</a>
 </div>
 
-<h2>Matchs planifiés</h2>
+<h2>Scheduled matches</h2>
 <table class="matches-table">
     <thead>
-        <tr><th>Équipes</th><th>Date</th><th>Début</th><th>Fin</th><th>Statut</th><th>Cotes</th></tr>
+        <tr><th>Teams</th><th>Date</th><th>Start</th><th>End</th><th>Status</th><th>Odds</th></tr>
     </thead>
     <tbody>
         {% for match in matches %}
@@ -27,14 +27,14 @@
             <td>{{ match.odds_team1 }} / {{ match.odds_team2 }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">Aucun match.</td></tr>
+        <tr><td colspan="6">No matches.</td></tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h2>Équipes</h2>
+<h2>Teams</h2>
 <table class="matches-table">
-    <thead><tr><th>Nom</th><th>Ville</th><th>Joueurs</th></tr></thead>
+    <thead><tr><th>Name</th><th>City</th><th>Players</th></tr></thead>
     <tbody>
         {% for team in teams %}
         <tr>
@@ -43,14 +43,14 @@
             <td>{{ team.players.count }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="3">Aucune équipe.</td></tr>
+        <tr><td colspan="3">No teams.</td></tr>
         {% endfor %}
     </tbody>
 </table>
 
-<h2>Joueurs</h2>
+<h2>Players</h2>
 <table class="matches-table">
-    <thead><tr><th>#</th><th>Nom</th><th>Poste</th><th>Équipe</th></tr></thead>
+    <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Team</th></tr></thead>
     <tbody>
         {% for player in players %}
         <tr>
@@ -60,7 +60,7 @@
             <td>{{ player.team }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">Aucun joueur.</td></tr>
+        <tr><td colspan="4">No players.</td></tr>
         {% endfor %}
     </tbody>
 </table>
