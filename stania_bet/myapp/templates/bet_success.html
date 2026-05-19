@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Success</title>
-</head>
-<body>
-    <h1>Your Bets Have Been Placed!</h1>
-    <a href="/">Return Home</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Bets Confirmed — Stania Bet{% endblock %}
+{% block content %}
+<div style="text-align:center; padding:60px 20px;">
+    <h1 style="color:#7ca5a6;">Your bets have been placed!</h1>
+    <p>You can track them in your personal space.</p>
+    <a href="{% url 'user_space' %}" class="btn-primary" style="margin-top:20px;">Go to My Space</a>
+    &nbsp;
+    <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
+</div>
+{% endblock %}

@@ -1,70 +1,36 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/confirm_bets.css' %}">
-    <title>Confirm Your Bets</title>
-</head>
-<body>
-    <header>
-        <button class="hamburger-menu">
-            &#9776;
-        </button>
-        <img src="{% static 'images/logo-no-background.png' %}" alt="Logo">
-        <nav class="nav-links">
-            <ul>
-                <li><a href="/signup">Sign Up</a></li> 
-                <li><a href="/signin">Sign In</a></li>
-                <li><a href="/">Home</a></li>
-                <li><a href="/allgames">All Games</a></li>
-                <li><a href="/bet">Bet</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <h1>Confirm Your Bets</h1>
+{% block title %}Confirmation des paris — Stania Bet{% endblock %}
 
-    <form method="post" action="{% url 'finalize_bets' %}">
-        {% csrf_token %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Match</th>
-                    <th>Team</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for bet in bets_data %}
-                <tr>
-                    <td>{{ bet.match_id }}</td> <!-- Remplacez par l'affichage du match réel -->
-                    <td>
-                        <input type="hidden" name="match_ids" value="{{ bet.match_id }}">
-                        {{ bet.team_choice }}
-                    </td>
-                    <td>
-                        <input type="hidden" name="amount_{{ bet.match_id }}" value="{{ bet.amount }}">
-                        {{ bet.amount }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit">Valider ma sélection</button>
-    </form>
+{% block content %}
+<h1>Confirmation de vos paris</h1>
+<p>Veuillez vérifier vos sélections avant de valider.</p>
 
-    <script>
-        document.querySelector('.hamburger-menu').addEventListener('click', function() {
-            document.querySelector('.nav-links').classList.toggle('show');
-        });
-
-        document.querySelector('form').addEventListener('submit', function(event) {
-            if (!confirm('Êtes-vous sûr de vouloir valider votre sélection ?')) {
-                event.preventDefault(); // Empêche la soumission du formulaire
-            }
-        });
-    </script>
-</body>
-</html>
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="confirmed" value="1">
+    <table class="matches-table">
+        <thead>
+            <tr><th>Match</th><th>Équipe choisie</th><th>Montant (€)</th></tr>
+        </thead>
+        <tbody>
+            {% for item in bets_data %}
+            <tr>
+                <td>{{ item.match.team1 }} vs {{ item.match.team2 }} — {{ item.match.game_date }}</td>
+                <td>{{ item.team }}</td>
+                <td>{{ item.amount }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">Aucun pari sélectionné.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if bets_data %}
+    <button type="submit" class="btn-primary" onclick="return confirm('Confirmer tous vos paris ?')">
+        Valider ma sélection
+    </button>
+    {% endif %}
+    <a href="{% url 'place_bets' %}" class="btn-secondary">Modifier</a>
+</form>
+{% endblock %}

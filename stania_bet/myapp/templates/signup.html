@@ -1,19 +1,28 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <title>Signup</title>
-</head>
-<body>
-    <h1>Signup</h1>
-    <form method="post">
+
+{% block title %}Inscription — Stania Bet{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/register.css' %}">{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Créer un compte</h1>
+    <form method="POST" class="auth-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Signup</button>
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }} :</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="form-error">{{ field.errors.0 }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <div class="form-error">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+        <button type="submit" class="btn-primary">Créer mon compte</button>
     </form>
-    <p>Already an account<a href="{% url 'signin' %}">Signup</a></p>
-</body>
-</html>
+    <p>Déjà inscrit ? <a href="{% url 'signin' %}">Se connecter</a></p>
+</div>
+{% endblock %}

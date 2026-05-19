@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+    <title>{% block title %}Stania Bet{% endblock %}</title>
+</head>
+<body>
+<header class="site-header">
+    <button class="hamburger-menu" aria-label="Menu">&#9776;</button>
+    <a href="{% url 'home' %}">
+        <img src="{% static 'images/logo-no-background.png' %}" alt="Stania Bet" class="logo">
+    </a>
+    <nav class="nav-links">
+        <ul>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'user_space' %}">Mon Espace</a></li>
+                <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+            {% else %}
+                <li><a href="{% url 'signup' %}">S'inscrire</a></li>
+                <li><a href="{% url 'signin' %}">Se connecter</a></li>
+            {% endif %}
+            <li><a href="{% url 'all_games' %}">Tous les matchs</a></li>
+            <li><a href="{% url 'place_bets' %}">Parier</a></li>
+            {% if user.is_staff %}
+                <li><a href="{% url 'admin_dashboard' %}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2024 Stania Bet — Super Bowl Official Partner</p>
+</footer>
+
+<script>
+    document.querySelector('.hamburger-menu').addEventListener('click', function () {
+        document.querySelector('.nav-links').classList.toggle('show');
+    });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,43 +1,67 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
-    <title>Espace Administrateur</title>
-</head>
-<body>
-    <header>
-        <h1>Espace Administrateur</h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'create_team' %}">Créer une Équipe</a></li>
-                <li><a href="{% url 'create_player' %}">Créer un Joueur</a></li>
-                <li><a href="{% url 'create_match' %}">Créer un Match</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <h2>Équipes</h2>
-    <ul>
-        {% for team in teams %}
-            <li>{{ team.name }} - {{ team.city }}</li>
-        {% endfor %}
-    </ul>
+{% block title %}Espace Administrateur — Stania Bet{% endblock %}
 
-    <h2>Joueurs</h2>
-    <ul>
-        {% for player in players %}
-            <li>{{ player.name }} - {{ player.position }} ({{ player.team }})</li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<h1>Espace Administrateur</h1>
+<div class="admin-actions">
+    <a href="{% url 'create_team' %}" class="btn-primary">+ Créer une équipe</a>
+    <a href="{% url 'create_player' %}" class="btn-primary">+ Créer un joueur</a>
+    <a href="{% url 'create_match' %}" class="btn-primary">+ Planifier un match</a>
+</div>
 
-    <h2>Matches</h2>
-    <ul>
+<h2>Matchs planifiés</h2>
+<table class="matches-table">
+    <thead>
+        <tr><th>Équipes</th><th>Date</th><th>Début</th><th>Fin</th><th>Statut</th><th>Cotes</th></tr>
+    </thead>
+    <tbody>
         {% for match in matches %}
-            <li>{{ match.team_a }} vs {{ match.team_b }} le {{ match.date }} - Cotes: {{ match.odds_team_a }} / {{ match.odds_team_b }}</li>
+        <tr>
+            <td>{{ match.team1 }} vs {{ match.team2 }}</td>
+            <td>{{ match.game_date }}</td>
+            <td>{{ match.start_time|time:"H:i" }}</td>
+            <td>{{ match.end_time|time:"H:i" }}</td>
+            <td>{{ match.get_status_display }}</td>
+            <td>{{ match.odds_team1 }} / {{ match.odds_team2 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">Aucun match.</td></tr>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </tbody>
+</table>
+
+<h2>Équipes</h2>
+<table class="matches-table">
+    <thead><tr><th>Nom</th><th>Ville</th><th>Joueurs</th></tr></thead>
+    <tbody>
+        {% for team in teams %}
+        <tr>
+            <td>{{ team.name }}</td>
+            <td>{{ team.city }}</td>
+            <td>{{ team.players.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">Aucune équipe.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Joueurs</h2>
+<table class="matches-table">
+    <thead><tr><th>#</th><th>Nom</th><th>Poste</th><th>Équipe</th></tr></thead>
+    <tbody>
+        {% for player in players %}
+        <tr>
+            <td>{{ player.number }}</td>
+            <td>{{ player.first_name }} {{ player.last_name }}</td>
+            <td>{{ player.get_position_display }}</td>
+            <td>{{ player.team }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Aucun joueur.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

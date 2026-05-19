@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Connexion — Stania Bet{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/login.css' %}">{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Connexion</h1>
+    <form method="POST" class="auth-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email">E-mail :</label>
+            <input type="email" id="email" name="email" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn-primary">Se connecter</button>
+    </form>
+    <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
+    <p>Pas encore de compte ? <a href="{% url 'signup' %}">S'inscrire</a></p>
+</div>
+{% endblock %}

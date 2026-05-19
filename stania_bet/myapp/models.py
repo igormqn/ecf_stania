@@ -3,7 +3,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-# Modèle Team
+
+
 class Team(models.Model):
     name = models.CharField(max_length=100)
     city = models.CharField(max_length=100, default='Unknown')
@@ -15,11 +16,7 @@ class Team(models.Model):
     def __str__(self):
         return f"{self.city} {self.name}"
 
-    def get_players_by_position(self, position):
-        return self.players.filter(position=position)
 
-
-# Modèle Player
 class Player(models.Model):
     POSITION_CHOICES = [
         ('QB', 'Quarterback'),
@@ -57,65 +54,39 @@ class Player(models.Model):
         return f"{self.first_name} {self.last_name} (#{self.number}) - {self.get_position_display()}"
 
     def clean(self):
-        # Valider que le numéro est entre 0 et 99
         if not (0 <= self.number <= 99):
             raise ValidationError('Player number must be between 0 and 99.')
 
 
-# Modèle Match
 class Match(models.Model):
     STATUS_CHOICES = [
-        ('Scheduled', 'Scheduled'),
-        ('Ongoing', 'Ongoing'),
-        ('Completed', 'Completed'),
+        ('Scheduled', 'À venir'),
+        ('Ongoing', 'En Cours'),
+        ('Completed', 'Terminé'),
     ]
 
     WEATHER_CHOICES = [
-        ('Cloudy', 'Cloudy'),
-        ('Rainy', 'Rainy'),
-        ('Sunny', 'Sunny'),
-        ('Windy', 'Windy'),
+        ('Cloudy', 'Nuageux'),
+        ('Rainy', 'Pluvieux'),
+        ('Sunny', 'Ensoleillé'),
+        ('Windy', 'Venteux'),
     ]
 
     team1 = models.ForeignKey(Team, related_name='team1_matches', on_delete=models.CASCADE)
     team2 = models.ForeignKey(Team, related_name='team2_matches', on_delete=models.CASCADE)
-    game_date = models.DateTimeField()
+    game_date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Scheduled')
-    score_team1 = models.PositiveIntegerField(default=0, null=True, blank=True)
-    score_team2 = models.PositiveIntegerField(default=0, null=True, blank=True)
-    odds_team1 = models.FloatField(default=1.0)
-    odds_team2 = models.FloatField(default=1.0)
-    weather = models.CharField(max_length=20, choices=WEATHER_CHOICES, default='Cloudy')
-    commentary = models.TextField(default='No commentary available')
+    score_team1 = models.PositiveIntegerField(default=0)
+    score_team2 = models.PositiveIntegerField(default=0)
+    odds_team1 = models.FloatField(default=1.5)
+    odds_team2 = models.FloatField(default=1.5)
+    weather = models.CharField(max_length=20, choices=WEATHER_CHOICES, default='Sunny')
+    commentary = models.TextField(blank=True, default='')
 
     def __str__(self):
-        return f'{self.team1} vs {self.team2} on {self.game_date}'
-
-    def clean(self):
-        # Ensure that start_time is before end_time
-        if self.start_time >= self.end_time:
-            raise ValidationError('End time must be after start time.')
-        
-        # Ensure that game_date is not in the past when setting up the match
-        if self.game_date < timezone.now():
-            raise ValidationError('The game date cannot be in the past.')
-
-    def save(self, *args, **kwargs):
-        # Determine status based on the current time and match times
-        current_time = timezone.now().time()
-        if self.game_date.date() > timezone.now().date():
-            self.status = 'Scheduled'
-        elif self.game_date.date() == timezone.now().date():
-            if self.start_time <= current_time <= self.end_time:
-                self.status = 'Ongoing'
-            elif current_time > self.end_time:
-                self.status = 'Completed'
-        else:
-            self.status = 'Completed'
-        
-        super().save(*args, **kwargs)
+        return f'{self.team1} vs {self.team2} le {self.game_date}'
 
     def get_winner(self):
         if self.status == 'Completed':
@@ -123,34 +94,46 @@ class Match(models.Model):
                 return self.team1
             elif self.score_team2 > self.score_team1:
                 return self.team2
-            else:
-                return 'Draw'
-        return 'Game not completed yet'
+            return 'Égalité'
+        return None
 
 
-# Modèle Bet
 class Bet(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bets')
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='bets')
     team_choice = models.ForeignKey(Team, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    winnings = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'match')
 
-    def clean(self):
-        # Vérifier que le choix de l'équipe est bien l'une des équipes du match
-        if self.team_choice not in [self.match.team1, self.match.team2]:
-            raise ValidationError('Team choice must be one of the teams playing the match.')
-
     def __str__(self):
-        return f"Bet by {self.user} on {self.team_choice} for {self.amount} USD"
+        return f"Pari de {self.user} sur {self.team_choice} — {self.amount}€"
+
+    def calculate_winnings(self):
+        """Calcule les gains/pertes une fois le match terminé."""
+        winner = self.match.get_winner()
+        if winner is None:
+            return None
+        if winner == self.team_choice:
+            if self.team_choice == self.match.team1:
+                return float(self.amount) * self.match.odds_team1
+            else:
+                return float(self.amount) * self.match.odds_team2
+        return -float(self.amount)
 
 
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=30, blank=False)
     last_name = models.CharField(max_length=30, blank=False)
     email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=False) 
+    must_change_password = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"

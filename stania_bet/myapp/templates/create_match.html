@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
-    <title>Créer un Match</title>
-</head>
-<body>
-    <header>
-        <h1>Créer un Match</h1>
-    </header>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Créer</button>
-    </form>
-    
-    <a href="{% url 'admin_dashboard' %}">Retour au tableau de bord</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Planifier un match — Stania Bet{% endblock %}
+{% block content %}
+<h1>Planifier un match</h1>
+<form method="POST" class="auth-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+        <label>{{ field.label }} :</label>{{ field }}
+        {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    {% if form.non_field_errors %}
+        <div class="form-error">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+    <button type="submit" class="btn-primary">Planifier</button>
+    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Annuler</a>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-fill end_time = start_time + 1 hour
+    document.getElementById('id_start_time').addEventListener('change', function () {
+        const start = this.value;
+        if (!start) return;
+        const [h, m] = start.split(':').map(Number);
+        const end = new Date(0, 0, 0, h + 1, m);
+        const hh = String(end.getHours()).padStart(2, '0');
+        const mm = String(end.getMinutes()).padStart(2, '0');
+        document.getElementById('id_end_time').value = `${hh}:${mm}`;
+    });
+</script>
+{% endblock %}

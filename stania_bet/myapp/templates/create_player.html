@@ -1,22 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
-    <title>Créer un Joueur</title>
-</head>
-<body>
-    <header>
-        <h1>Créer un Joueur</h1>
-    </header>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Créer</button>
-    </form>
-    
-    <a href="{% url 'admin_dashboard' %}">Retour au tableau de bord</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Créer un joueur — Stania Bet{% endblock %}
+{% block content %}
+<h1>Créer un joueur</h1>
+<form method="POST" class="auth-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+        <label>{{ field.label }} :</label>{{ field }}
+        {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-primary">Créer</button>
+    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">Annuler</a>
+</form>
+{% endblock %}

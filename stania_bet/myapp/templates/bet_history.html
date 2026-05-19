@@ -1,89 +1,64 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/user_space.css' %}">
-    <title>Historique des Mises</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <header>
-        <!-- Votre code d'en-tête ici -->
-    </header>
-    
-    <h1>Historique des Mises</h1>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Équipes</th>
-                <th>Date du Match</th>
-                <th>Heure de Début</th>
-                <th>Heure de Fin</th>
-                <th>Mise</th>
-                <th>Montant</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in bets_with_matches %}
-            <tr>
-                <td>{{ item.team_names }}</td>
-                <td>{{ item.match_date }}</td>
-                <td>{{ item.start_time }}</td>
-                <td>{{ item.end_time }}</td>
-                <td>{{ item.bet.created_at.date }}</td>
-                <td>{{ item.bet.amount }}</td>
-                <td>
-                    {% if item.bet.match.status != 'Completed' %}
-                        <button class="update-bet" data-id="{{ item.bet.id }}">Mise à jour</button>
-                        <button class="delete-bet" data-id="{{ item.bet.id }}">Supprimer</button>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7">Aucune mise trouvée.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    <!-- Fenêtre modale pour confirmation de suppression -->
-    <div id="deleteModal" style="display:none;">
-        <p>Êtes-vous sûr de vouloir supprimer cette mise ?</p>
-        <button id="confirmDelete">Oui</button>
-        <button id="cancelDelete">Non</button>
-    </div>
+{% block title %}Historique des mises — Stania Bet{% endblock %}
 
-    <script>
-        let betIdToDelete = null;
+{% block content %}
+<h1>Historique de mes mises</h1>
 
-        $(document).on('click', '.delete-bet', function() {
-            betIdToDelete = $(this).data('id');
-            $('#deleteModal').show();
-        });
+<table class="matches-table">
+    <thead>
+        <tr>
+            <th>Équipes</th>
+            <th>Date du match</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Mon équipe</th>
+            <th>Montant</th>
+            <th>Mise le</th>
+            <th>Résultat</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bet in bets %}
+        <tr>
+            <td>{{ bet.match.team1 }} vs {{ bet.match.team2 }}</td>
+            <td>{{ bet.match.game_date }}</td>
+            <td>{{ bet.match.start_time|time:"H:i" }}</td>
+            <td>{{ bet.match.end_time|time:"H:i" }}</td>
+            <td>{{ bet.team_choice }}</td>
+            <td>{{ bet.amount }} €</td>
+            <td>{{ bet.created_at|date:"d/m/Y" }}</td>
+            <td>
+                {% if bet.match.status == 'Completed' %}
+                    {% if bet.winnings is not None %}
+                        {% if bet.winnings >= 0 %}
+                            <span style="color:green;font-weight:bold;">+{{ bet.winnings|floatformat:2 }} €</span>
+                        {% else %}
+                            <span style="color:red;font-weight:bold;">{{ bet.winnings|floatformat:2 }} €</span>
+                        {% endif %}
+                    {% else %}—{% endif %}
+                {% else %}
+                    <span class="badge badge-upcoming">{{ bet.match.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if bet.match.status == 'Scheduled' %}
+                <a href="{% url 'update_bet' bet.id %}" class="btn-secondary btn-sm">Modifier</a>
+                <form method="POST" action="{% url 'delete_bet' bet.id %}" style="display:inline;"
+                      onsubmit="return confirm('Supprimer cette mise ?')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger btn-sm">Supprimer</button>
+                </form>
+                {% else %}—{% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9">Aucune mise enregistrée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-        $('#confirmDelete').click(function() {
-            $.ajax({
-                url: `/delete_bet/${betIdToDelete}/`,  // URL à définir pour la suppression
-                type: 'DELETE',
-                success: function() {
-                    location.reload();  // Recharger la page après suppression
-                }
-            });
-        });
-
-        $('#cancelDelete').click(function() {
-            $('#deleteModal').hide();
-        });
-
-        $(document).on('click', '.update-bet', function() {
-            const betId = $(this).data('id');
-            window.location.href = `/update_bet/${betId}/`;  // URL à définir pour la mise à jour
-        });
-    </script>
-</body>
-</html>
+<a href="{% url 'user_space' %}" class="btn-secondary">← Retour à mon espace</a>
+{% endblock %}

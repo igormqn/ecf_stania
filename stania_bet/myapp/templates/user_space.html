@@ -1,98 +1,102 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/user_space.css' %}">
-    <title>Mon Espace</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <header>
-        <button class="hamburger-menu">
-            &#9776;
-        </button>
-        <img src="{% static 'images/logo-no-background.png' %}" alt="Logo">
-        <nav class="nav-links">
-            <ul>
-                <li><a href="/signup">Sign Up</a></li> 
-                <li><a href="/signin">Sign In</a></li>
-                <li><a href="/">Home</a></li>
-                <li><a href="/allgames">All Games</a></li>
-                <li><a href="/bet">Bet</a></li>
-                <li><a href="/user_space">Mon Espace</a></li> <!-- Lien vers l'espace utilisateur -->
-            </ul>
-        </nav>
-    </header>
-    
-    <h1>Mon Espace</h1>
-    
-    <h2>Informations Utilisateur</h2>
-    <p><strong>Nom:</strong> {{ user.first_name }}</p>
-    <p><strong>Prénom:</strong> {{ user.last_name }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    
+
+{% block title %}Mon Espace — Stania Bet{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>Mon Espace</h1>
+
+<div class="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="info">Mes informations</button>
+    <button class="tab-btn" data-tab="history">Historique des mises</button>
+</div>
+
+<div id="tab-dashboard" class="tab-content">
+    <h2>Gains / Pertes (matchs terminés)</h2>
+    <canvas id="betChart" style="max-height:300px;"></canvas>
+    <script id="history-data" type="application/json">{{ history_json|safe }}</script>
+</div>
+
+<div id="tab-info" class="tab-content" style="display:none;">
+    <h2>Mes informations</h2>
+    <p><strong>Prénom :</strong> {{ user.first_name }}</p>
+    <p><strong>Nom :</strong> {{ user.last_name }}</p>
+    <p><strong>E-mail :</strong> {{ user.email }}</p>
+</div>
+
+<div id="tab-history" class="tab-content" style="display:none;">
     <h2>Historique des mises</h2>
-    <table>
+    <a href="{% url 'bet_history' %}" class="btn-secondary">Voir le détail complet</a>
+    <table class="matches-table" style="margin-top:1rem;">
         <thead>
-            <tr>
-                <th>Date</th>
-                <th>Match</th>
-                <th>Équipe Choisie</th>
-                <th>Montant</th>
-                <th>Résultat</th>
-            </tr>
+            <tr><th>Match</th><th>Équipe</th><th>Montant</th><th>Date</th><th>Résultat</th></tr>
         </thead>
         <tbody>
             {% for bet in bets %}
             <tr>
-                <td>{{ bet.created_at.date }}</td>
-                <td>{{ bet.match }}</td>
+                <td>{{ bet.match.team1 }} vs {{ bet.match.team2 }}</td>
                 <td>{{ bet.team_choice }}</td>
-                <td>{{ bet.amount }}</td>
-                <td>{{ bet.get_result_display }}</td>
+                <td>{{ bet.amount }} €</td>
+                <td>{{ bet.match.game_date }}</td>
+                <td>
+                    {% if bet.match.status == 'Completed' %}
+                        {% if bet.winnings is not None %}
+                            {% if bet.winnings >= 0 %}
+                                <span style="color:green;">+{{ bet.winnings|floatformat:2 }} €</span>
+                            {% else %}
+                                <span style="color:red;">{{ bet.winnings|floatformat:2 }} €</span>
+                            {% endif %}
+                        {% else %}—{% endif %}
+                    {% else %}
+                        <span class="badge badge-upcoming">{{ bet.match.get_status_display }}</span>
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
-            <tr>
-                <td colspan="5">Aucune mise trouvée.</td>
-            </tr>
+            <tr><td colspan="5">Aucune mise enregistrée.</td></tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+{% endblock %}
 
-    <h2>Graphique Historique des Paris</h2>
-    <canvas id="betHistoryChart"></canvas>
+{% block extra_js %}
+<script>
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            this.classList.add('active');
+            document.getElementById('tab-' + this.dataset.tab).style.display = 'block';
+        });
+    });
 
-    <!-- Script JSON -->
-    <script id="bet-history" type="application/json">{{ history_json|safe }}</script>
-
-    <script>
-        const betHistory = JSON.parse(document.getElementById('bet-history').textContent);  // Utilisation du script JSON
-        const ctx = document.getElementById('betHistoryChart').getContext('2d');
-        const labels = Object.keys(betHistory);
-        const data = Object.values(betHistory);
-        
-        new Chart(ctx, {
+    // Chart
+    const raw = JSON.parse(document.getElementById('history-data').textContent);
+    if (raw.length > 0) {
+        const labels = raw.map(d => d.date);
+        const amounts = raw.map(d => d.amount);
+        new Chart(document.getElementById('betChart'), {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Gains/Perte',
-                    data: data,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false
+                    label: 'Gains/Pertes (€)',
+                    data: amounts,
+                    borderColor: '#e63946',
+                    backgroundColor: 'rgba(230,57,70,0.1)',
+                    fill: true,
+                    tension: 0.3,
                 }]
             },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+            options: { scales: { y: { beginAtZero: false } } }
         });
-    </script>    
-</body>
-</html>
+    }
+</script>
+{% endblock %}

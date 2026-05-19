@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Django
+*.sqlite3
+*.log
+local_settings.py
+staticfiles/
+media/
+
+# Virtual env
+env/
+venv/
+.venv/
+
+# Flutter / Dart
+app_mobile/.dart_tool/
+app_mobile/.flutter-plugins
+app_mobile/.flutter-plugins-dependencies
+app_mobile/build/
+app_mobile/*.iml
+app_mobile/.packages
+app_mobile/android/.gradle/
+app_mobile/android/local.properties
+app_mobile/android/app/debug/
+app_mobile/android/app/profile/
+app_mobile/android/app/release/
+app_mobile/ios/Pods/
+app_mobile/ios/.symlinks/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
