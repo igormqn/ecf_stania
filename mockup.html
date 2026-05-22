@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stania Bet — Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900: #080f1e;
+    --navy-800: #0d1729;
+    --navy-700: #112035;
+    --navy-600: #162840;
+    --gold-500: #f59e0b;
+    --gold-400: #fbbf24;
+    --cyan-400: #22d3ee;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --surface: #111827;
+    --border: #1f2937;
+    --green: #4ade80;
+    --red: #f87171;
+    --orange: #fb923c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: var(--navy-900); color: var(--text-primary); min-height: 100vh; }
+
+  /* ── NAV ── */
+  .mockup-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: #000a; backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; flex-wrap: wrap;
+  }
+  .mockup-nav span { color: var(--gold-400); font-size: 12px; font-weight: 700; margin-right: 8px; }
+  .mockup-nav button {
+    background: var(--navy-700); border: 1px solid var(--border);
+    color: var(--text-secondary); padding: 5px 12px; border-radius: 6px;
+    font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer;
+    transition: all .15s;
+  }
+  .mockup-nav button:hover, .mockup-nav button.active {
+    background: var(--gold-500); color: var(--navy-900); border-color: var(--gold-500);
+    font-weight: 700;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding-top: 52px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ── SHARED ── */
+  .site-header {
+    background: rgba(13,23,41,.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px; position: sticky; top: 52px; z-index: 100;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--gold-400), var(--cyan-400));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a.gold { color: var(--gold-400); font-weight: 700; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
+    border: none; text-decoration: none; transition: all .15s; }
+  .btn-gold { background: var(--gold-500); color: var(--navy-900); }
+  .btn-gold:hover { background: var(--gold-400); box-shadow: 0 0 20px rgba(245,158,11,.4); }
+  .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--gold-500); color: var(--gold-400); }
+  .btn-red { background: var(--red); color: var(--navy-900); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px;
+    color: var(--text-primary); margin-bottom: 4px; }
+  .section-sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px;
+  }
+  .card-title { font-size: 11px; letter-spacing: 2px; color: var(--gold-400);
+    font-weight: 700; text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px; }
+  .card-title::before { content: ''; width: 3px; height: 14px;
+    background: var(--gold-500); border-radius: 2px; display: inline-block; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+  }
+  .badge-ongoing { background: rgba(251,146,60,.15); color: var(--orange); border: 1px solid rgba(251,146,60,.35); }
+  .badge-scheduled { background: rgba(34,211,238,.12); color: var(--cyan-400); border: 1px solid rgba(34,211,238,.3); }
+  .badge-completed { background: rgba(148,163,184,.1); color: var(--text-secondary); border: 1px solid rgba(148,163,184,.25); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+    animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .score-big { font-size: 36px; font-weight: 900; color: var(--gold-400); letter-spacing: 4px; }
+  .score-sm  { font-size: 22px; font-weight: 900; color: var(--gold-400); letter-spacing: 3px; }
+
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .mt-8  { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .tag { font-size: 11px; color: var(--text-secondary); }
+
+  /* ── INPUT ── */
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 6px; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: var(--navy-700); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px; color: var(--text-primary);
+    font-family: 'Inter', sans-serif; font-size: 13px; outline: none;
+    transition: border-color .15s;
+  }
+  .form-group input:focus { border-color: var(--gold-500); }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; letter-spacing: 1px; color: var(--gold-400);
+    text-transform: uppercase; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  td { padding: 12px 14px; font-size: 13px; color: var(--text-primary);
+    border-bottom: 1px solid rgba(31,41,55,.6); }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .td-sec { color: var(--text-secondary); }
+
+  /* ── HERO ── */
+  .hero {
+    background: radial-gradient(ellipse at 60% 0%, rgba(245,158,11,.08) 0%, transparent 65%),
+                radial-gradient(ellipse at 20% 80%, rgba(34,211,238,.06) 0%, transparent 55%);
+    padding: 80px 24px 60px; text-align: center;
+  }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px,8vw,96px);
+    letter-spacing: 6px; line-height: 1;
+    background: linear-gradient(135deg, var(--gold-400) 0%, var(--cyan-400) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-sub { color: var(--text-secondary); font-size: 14px; letter-spacing: 3px;
+    margin: 12px 0 36px; text-transform: uppercase; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .stat-row { display: flex; justify-content: center; gap: 48px; margin-top: 56px;
+    padding-top: 40px; border-top: 1px solid var(--border); }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--gold-400); }
+  .stat-lbl { font-size: 11px; color: var(--text-secondary); letter-spacing: 1px; }
+
+  /* ── SIDEBAR LAYOUT ── */
+  .layout-sidebar { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+  .sidebar { background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px; height: fit-content; }
+  .sidebar-title { font-size: 12px; letter-spacing: 1.5px; color: var(--text-secondary);
+    text-transform: uppercase; font-weight: 600; margin-bottom: 16px; }
+  .sidebar-item { padding: 10px 14px; border-radius: 10px; font-size: 13px;
+    cursor: pointer; color: var(--text-secondary); margin-bottom: 4px; }
+  .sidebar-item:hover { background: rgba(245,158,11,.08); color: var(--text-primary); }
+  .sidebar-item.active { background: rgba(245,158,11,.12); color: var(--gold-400); font-weight: 600; }
+
+  /* ── FLUTTER MOCKUP ── */
+  .mobile-frame {
+    width: 375px; height: 680px; background: var(--navy-900);
+    border-radius: 36px; border: 3px solid #2a3545;
+    overflow: hidden; position: relative; margin: 0 auto;
+    box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .mobile-statusbar { height: 36px; background: var(--navy-800);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; font-size: 11px; color: var(--text-secondary); }
+  .mobile-appbar { height: 56px; background: var(--navy-800);
+    display: flex; align-items: center; padding: 0 16px;
+    border-bottom: 1px solid var(--border); font-size: 16px; font-weight: 700; }
+  .mobile-body { padding: 16px; overflow-y: auto; height: calc(100% - 92px); }
+  .mobile-card { background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .mobile-score { font-size: 24px; font-weight: 900; color: var(--gold-400);
+    letter-spacing: 3px; text-align: center; margin: 6px 0; }
+  .mobile-team { font-size: 13px; font-weight: 700; }
+  .mobile-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+  .mobile-tab { padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    background: var(--navy-700); color: var(--text-secondary); cursor: pointer; }
+  .mobile-tab.active { background: var(--gold-500); color: var(--navy-900); }
+
+  /* ── DESKTOP MOCKUP ── */
+  .desktop-frame {
+    background: var(--navy-900); border-radius: 12px;
+    border: 2px solid #2a3545; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  }
+  .desktop-titlebar { height: 32px; background: #060d1a;
+    display: flex; align-items: center; padding: 0 12px; gap: 6px; }
+  .dt-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .desktop-header { height: 48px; background: var(--navy-800);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; border-bottom: 1px solid var(--border); }
+  .desktop-body { display: grid; grid-template-columns: 240px 1fr; height: 420px; }
+  .desktop-left { background: var(--navy-800); border-right: 1px solid var(--border); padding: 12px; overflow-y: auto; }
+  .desktop-right { padding: 16px; background: var(--surface); }
+  .dl-item { padding: 8px 10px; border-radius: 8px; font-size: 12px;
+    color: var(--text-secondary); margin-bottom: 3px; cursor: pointer; }
+  .dl-item:hover { background: rgba(255,255,255,.04); color: var(--text-primary); }
+  .dl-item.active { background: rgba(245,158,11,.1); color: var(--orange); }
+
+  /* ── AUTH PAGES ── */
+  .auth-page { min-height: calc(100vh - 52px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+  .auth-card { background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 36px; width: 100%; max-width: 420px; }
+  .auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 4px; text-align: center;
+    background: linear-gradient(90deg, var(--gold-400), var(--cyan-400));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+  .auth-sub { text-align: center; color: var(--text-secondary); font-size: 12px;
+    letter-spacing: 1px; margin-bottom: 28px; }
+  .auth-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .auth-card p  { font-size: 13px; color: var(--text-secondary); margin-bottom: 22px; }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .link-gold { color: var(--gold-400); font-weight: 700; cursor: pointer; }
+  .text-center { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 16px; }
+
+  /* ── MATCH CARD ── */
+  .match-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px; margin-bottom: 14px;
+    transition: border-color .2s, transform .15s;
+  }
+  .match-card:hover { border-color: rgba(245,158,11,.3); transform: translateY(-1px); }
+  .match-card.ongoing { border-color: rgba(251,146,60,.4); }
+  .teams { font-size: 16px; font-weight: 800; }
+  .odds { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .match-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+  /* ── USER SPACE ── */
+  .profile-banner { background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+    border: 1px solid var(--border); border-radius: 16px; padding: 28px;
+    display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+  .avatar { width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-500), var(--cyan-400));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900; color: var(--navy-900); flex-shrink: 0; }
+  .kpi-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; text-align: center; }
+  .kpi-val { font-size: 26px; font-weight: 900; color: var(--gold-400); }
+  .kpi-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ── ADMIN ── */
+  .admin-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+  .admin-stat { background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; }
+  .admin-stat-val { font-size: 28px; font-weight: 900; color: var(--gold-400); }
+  .admin-stat-lbl { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .admin-stat-delta { font-size: 11px; color: var(--green); margin-top: 4px; }
+
+  .tag-admin { background: rgba(245,158,11,.12); color: var(--gold-400); border: 1px solid rgba(245,158,11,.25);
+    padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ── MOCKUP NAV ── -->
+<nav class="mockup-nav">
+  <span>STANIA BET — Mockup</span>
+  <button class="active" onclick="show('home')">🏠 Home</button>
+  <button onclick="show('allgames')">🏈 All Games</button>
+  <button onclick="show('gamedetail')">📋 Game Detail</button>
+  <button onclick="show('placebet')">💰 Place Bet</button>
+  <button onclick="show('userspace')">👤 My Space</button>
+  <button onclick="show('history')">📜 History</button>
+  <button onclick="show('admin')">⚙️ Admin</button>
+  <button onclick="show('login')">🔐 Sign In</button>
+  <button onclick="show('signup')">📝 Sign Up</button>
+  <button onclick="show('mobile')">📱 Flutter</button>
+  <button onclick="show('desktop')">🖥️ Desktop</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: HOME -->
+<div id="page-home" class="page active">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">All Matches</a>
+      <a href="#" class="gold">Bet Now</a>
+      <a href="#">My Space</a>
+      <a class="btn btn-outline" href="#">Sign In</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-title">STANIA BET</div>
+    <div class="hero-sub">Official Super Bowl Betting Platform</div>
+    <div class="hero-btns">
+      <a class="btn btn-gold">🏈 Bet Now</a>
+      <a class="btn btn-outline">View All Matches →</a>
+    </div>
+    <div class="stat-row">
+      <div><div class="stat-val">7</div><div class="stat-lbl">Active Matches</div></div>
+      <div><div class="stat-val">48</div><div class="stat-lbl">Total Bets</div></div>
+      <div><div class="stat-val">€2 400</div><div class="stat-lbl">Wagered Today</div></div>
+    </div>
+  </div>
+
+  <!-- Today's matches -->
+  <div class="container">
+    <div class="section-title">Today's Matches</div>
+    <div class="section-sub">Live & upcoming games — updated in real time</div>
+
+    <!-- Ongoing -->
+    <div class="match-card ongoing">
+      <div class="flex-between">
+        <div class="teams">Kansas City Chiefs vs Philadelphia Eagles</div>
+        <span class="badge badge-ongoing"><span class="dot"></span>Ongoing</span>
+      </div>
+      <div class="odds">Odds: Chiefs × 1.85 | Eagles × 2.10</div>
+      <div class="flex-between mt-16">
+        <div class="score-sm">21 — 17</div>
+        <div style="display:flex;gap:8px">
+          <a class="btn btn-outline" style="padding:6px 14px;font-size:12px">Details</a>
+          <a class="btn btn-gold" style="padding:6px 14px;font-size:12px">Place Bet</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scheduled -->
+    <div class="match-card">
+      <div class="flex-between">
+        <div class="teams">San Francisco 49ers vs Dallas Cowboys</div>
+        <span class="badge badge-scheduled">Upcoming</span>
+      </div>
+      <div class="odds">Odds: 49ers × 1.70 | Cowboys × 2.30 · Starts at 21:00</div>
+      <div class="flex-between mt-16">
+        <span class="tag">📅 Today 21:00</span>
+        <a class="btn btn-gold" style="padding:6px 14px;font-size:12px">Place Bet</a>
+      </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="match-card" style="opacity:.6">
+      <div class="flex-between">
+        <div class="teams">Green Bay Packers vs Chicago Bears</div>
+        <span class="badge badge-completed">Completed</span>
+      </div>
+      <div class="flex-between mt-16">
+        <div class="score-sm" style="color:var(--text-secondary)">28 — 14</div>
+        <a class="btn btn-outline" style="padding:6px 14px;font-size:12px">Details</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: ALL GAMES -->
+<div id="page-allgames" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#" class="gold">All Matches</a>
+      <a href="#">Bet Now</a>
+      <a href="#">My Space</a>
+      <a class="btn btn-outline" href="#">Sign In</a>
+    </nav>
+  </header>
+  <div class="container">
+    <div class="section-title">All Matches</div>
+    <div class="section-sub">Browse all scheduled, ongoing and completed games</div>
+
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button class="btn btn-gold" style="font-size:12px;padding:6px 16px">All</button>
+      <button class="btn btn-outline" style="font-size:12px;padding:6px 16px">Ongoing</button>
+      <button class="btn btn-outline" style="font-size:12px;padding:6px 16px">Upcoming</button>
+      <button class="btn btn-outline" style="font-size:12px;padding:6px 16px">Completed</button>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Match</th><th>Date</th><th>Time</th><th>Odds</th><th>Score</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Chiefs vs Eagles</strong></td>
+            <td class="td-sec">2026-05-20</td>
+            <td class="td-sec">18:00 — 21:00</td>
+            <td class="td-sec">1.85 / 2.10</td>
+            <td><span class="score-sm" style="font-size:16px">21 — 17</span></td>
+            <td><span class="badge badge-ongoing"><span class="dot"></span>Ongoing</span></td>
+            <td><a class="btn btn-gold" style="font-size:11px;padding:5px 12px">Bet</a></td>
+          </tr>
+          <tr>
+            <td><strong>49ers vs Cowboys</strong></td>
+            <td class="td-sec">2026-05-20</td>
+            <td class="td-sec">21:00 — 00:00</td>
+            <td class="td-sec">1.70 / 2.30</td>
+            <td class="td-sec">— — —</td>
+            <td><span class="badge badge-scheduled">Upcoming</span></td>
+            <td><a class="btn btn-gold" style="font-size:11px;padding:5px 12px">Bet</a></td>
+          </tr>
+          <tr>
+            <td><strong>Packers vs Bears</strong></td>
+            <td class="td-sec">2026-05-19</td>
+            <td class="td-sec">15:00 — 18:00</td>
+            <td class="td-sec">2.00 / 1.95</td>
+            <td><span style="font-size:14px;font-weight:900;color:var(--text-secondary)">28 — 14</span></td>
+            <td><span class="badge badge-completed">Completed</span></td>
+            <td><a class="btn btn-outline" style="font-size:11px;padding:5px 12px">View</a></td>
+          </tr>
+          <tr>
+            <td><strong>Ravens vs Bengals</strong></td>
+            <td class="td-sec">2026-05-21</td>
+            <td class="td-sec">19:30 — 22:30</td>
+            <td class="td-sec">1.60 / 2.50</td>
+            <td class="td-sec">— — —</td>
+            <td><span class="badge badge-scheduled">Upcoming</span></td>
+            <td><a class="btn btn-gold" style="font-size:11px;padding:5px 12px">Bet</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: GAME DETAIL -->
+<div id="page-gamedetail" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">← All Matches</a>
+      <span style="color:var(--text-secondary)">|</span>
+      <a href="#" class="gold">Chiefs vs Eagles</a>
+    </nav>
+  </header>
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div>
+        <div class="section-title">Kansas City Chiefs vs Philadelphia Eagles</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+          <span class="badge badge-ongoing"><span class="dot"></span>Ongoing</span>
+          <span class="tag">📅 2026-05-20 · 18:00 — 21:00</span>
+        </div>
+      </div>
+      <a class="btn btn-gold">💰 Place my Bet</a>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <!-- Score card -->
+      <div class="card" style="text-align:center;border-color:rgba(245,158,11,.25)">
+        <div style="font-size:11px;letter-spacing:2px;color:var(--text-secondary);margin-bottom:16px">LIVE SCORE</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:24px">
+          <div>
+            <div style="font-weight:800;margin-bottom:6px">Chiefs</div>
+            <div class="score-big">21</div>
+          </div>
+          <div style="color:var(--gold-400);font-size:28px;font-weight:900">—</div>
+          <div>
+            <div style="font-weight:800;margin-bottom:6px">Eagles</div>
+            <div class="score-big">17</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div class="card">
+        <div class="card-title">Match Info</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="flex-between"><span class="tag">Date</span><span>2026-05-20</span></div>
+          <div style="height:1px;background:var(--border)"></div>
+          <div class="flex-between"><span class="tag">Start</span><span>18:00</span></div>
+          <div style="height:1px;background:var(--border)"></div>
+          <div class="flex-between"><span class="tag">End</span><span>21:00</span></div>
+          <div style="height:1px;background:var(--border)"></div>
+          <div class="flex-between"><span class="tag">Weather</span><span>☀️ Clear</span></div>
+          <div style="height:1px;background:var(--border)"></div>
+          <div class="flex-between"><span class="tag">Odds</span><span>1.85 / 2.10</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Odds & bets -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Betting Stats</div>
+      <div class="grid-2">
+        <div style="text-align:center;padding:16px;background:rgba(245,158,11,.06);border-radius:10px">
+          <div style="font-weight:800;margin-bottom:4px">Kansas City Chiefs</div>
+          <div style="font-size:28px;font-weight:900;color:var(--gold-400)">× 1.85</div>
+          <div class="tag mt-8">23 bets placed</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:rgba(34,211,238,.05);border-radius:10px">
+          <div style="font-weight:800;margin-bottom:4px">Philadelphia Eagles</div>
+          <div style="font-size:28px;font-weight:900;color:var(--cyan-400)">× 2.10</div>
+          <div class="tag mt-8">15 bets placed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commentary -->
+    <div class="card" style="border-left:3px solid var(--gold-500)">
+      <div class="card-title">Commentary</div>
+      <p style="color:var(--text-secondary);font-size:13px;line-height:1.9">
+        <strong style="color:var(--gold-400)">Q3 — 2nd down:</strong> Mahomes finds Kelce in the end zone for a 7-yard touchdown pass. Chiefs extend their lead to 21-17 with 4 minutes left in the third quarter.<br><br>
+        <strong style="color:var(--gold-400)">Q2 — Halftime:</strong> Eagles trail by 4 after a dominant defensive performance in the second quarter. Hurts leads a late drive but settles for a field goal.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: PLACE BET -->
+<div id="page-placebet" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">All Matches</a>
+      <a href="#" class="gold">Bet Now</a>
+      <a href="#">My Space</a>
+    </nav>
+  </header>
+  <div class="container" style="max-width:700px">
+    <div class="section-title">Place a Bet</div>
+    <div class="section-sub">Choose a match and pick your team</div>
+
+    <div class="card">
+      <div class="card-title">Bet Details</div>
+
+      <div class="form-group">
+        <label>Select a match</label>
+        <select>
+          <option>🟢 Kansas City Chiefs vs Philadelphia Eagles — Today 18:00</option>
+          <option>○ San Francisco 49ers vs Dallas Cowboys — Today 21:00</option>
+          <option>○ Baltimore Ravens vs Cincinnati Bengals — Tomorrow 19:30</option>
+        </select>
+      </div>
+
+      <!-- Team selection -->
+      <div class="form-group">
+        <label>Choose your team</label>
+        <div class="grid-2" style="margin-top:6px">
+          <div style="border:2px solid var(--gold-500);border-radius:12px;padding:18px;text-align:center;background:rgba(245,158,11,.08);cursor:pointer">
+            <div style="font-weight:800;font-size:15px">Kansas City Chiefs</div>
+            <div style="font-size:22px;font-weight:900;color:var(--gold-400);margin-top:6px">× 1.85</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">✓ Selected</div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;cursor:pointer">
+            <div style="font-weight:800;font-size:15px">Philadelphia Eagles</div>
+            <div style="font-size:22px;font-weight:900;color:var(--cyan-400);margin-top:6px">× 2.10</div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Click to select</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Stake amount (€)</label>
+        <input type="number" placeholder="e.g. 50" value="50">
+      </div>
+
+      <!-- Summary -->
+      <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:16px;margin-bottom:20px">
+        <div class="flex-between" style="margin-bottom:8px">
+          <span class="tag">Potential winnings</span>
+          <span style="font-size:20px;font-weight:900;color:var(--green)">€92.50</span>
+        </div>
+        <div class="flex-between">
+          <span class="tag">Stake × Odds</span>
+          <span style="color:var(--text-secondary);font-size:13px">€50 × 1.85</span>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:15px">
+        Confirm Bet →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: USER SPACE -->
+<div id="page-userspace" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">All Matches</a>
+      <a href="#" class="gold">My Space</a>
+      <a class="btn btn-outline" href="#">Logout</a>
+    </nav>
+  </header>
+  <div class="container">
+    <!-- Profile banner -->
+    <div class="profile-banner">
+      <div class="avatar">JD</div>
+      <div>
+        <div style="font-size:20px;font-weight:800">John Doe</div>
+        <div style="color:var(--text-secondary);font-size:13px;margin-top:2px">john@example.com</div>
+        <div style="margin-top:8px"><span class="tag-admin">Player</span></div>
+      </div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <a class="btn btn-gold">🏈 Place a Bet</a>
+        <a class="btn btn-outline" style="font-size:12px">Change Password</a>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-val">8</div>
+        <div class="kpi-lbl">Total Bets</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val" style="color:var(--green)">+€142</div>
+        <div class="kpi-lbl">Net Winnings</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">62%</div>
+        <div class="kpi-lbl">Win Rate</div>
+      </div>
+    </div>
+
+    <!-- Active bets -->
+    <div class="section-title" style="font-size:20px">Active Bets</div>
+    <div class="section-sub">Bets on ongoing or upcoming matches</div>
+
+    <div class="match-card ongoing">
+      <div class="flex-between">
+        <div>
+          <div class="teams">Chiefs vs Eagles</div>
+          <div class="tag mt-8">Team chosen: <strong style="color:var(--text-primary)">Chiefs</strong> · Stake: €50</div>
+        </div>
+        <span class="badge badge-ongoing"><span class="dot"></span>Ongoing</span>
+      </div>
+      <div class="flex-between mt-16">
+        <div class="score-sm">21 — 17</div>
+        <div style="display:flex;gap:8px">
+          <a class="btn btn-outline" style="font-size:12px;padding:6px 14px">Edit</a>
+          <a class="btn btn-red" style="font-size:12px;padding:6px 14px">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: HISTORY -->
+<div id="page-history" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#" class="gold">My Space</a>
+      <a class="btn btn-outline">Logout</a>
+    </nav>
+  </header>
+  <div class="container">
+    <div class="section-title">Bet History</div>
+    <div class="section-sub">All your past bets</div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Match</th><th>Date</th><th>Team</th><th>Stake</th><th>Result</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Chiefs vs Eagles</strong></td>
+            <td class="td-sec">2026-05-20</td>
+            <td>Chiefs</td>
+            <td>€50</td>
+            <td><span style="color:var(--green);font-weight:800">+€92.50</span></td>
+            <td><span class="badge badge-ongoing"><span class="dot"></span>Ongoing</span></td>
+          </tr>
+          <tr>
+            <td><strong>Packers vs Bears</strong></td>
+            <td class="td-sec">2026-05-19</td>
+            <td>Packers</td>
+            <td>€30</td>
+            <td><span style="color:var(--green);font-weight:800">+€60.00</span></td>
+            <td><span class="badge badge-completed">Completed ✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Bills vs Dolphins</strong></td>
+            <td class="td-sec">2026-05-18</td>
+            <td>Dolphins</td>
+            <td>€20</td>
+            <td><span style="color:var(--red);font-weight:800">−€20.00</span></td>
+            <td><span class="badge badge-completed">Completed ✗</span></td>
+          </tr>
+          <tr>
+            <td><strong>Rams vs Seahawks</strong></td>
+            <td class="td-sec">2026-05-17</td>
+            <td>Rams</td>
+            <td>€40</td>
+            <td><span style="color:var(--green);font-weight:800">+€68.00</span></td>
+            <td><span class="badge badge-completed">Completed ✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: ADMIN -->
+<div id="page-admin" class="page">
+  <header class="site-header">
+    <div class="logo">STANIA BET</div>
+    <nav class="nav-links">
+      <a href="#">Home</a>
+      <a href="#" class="gold">Admin Dashboard</a>
+      <span class="tag-admin">Admin</span>
+      <a class="btn btn-outline">Logout</a>
+    </nav>
+  </header>
+  <div class="container">
+    <div class="section-title">Admin Dashboard</div>
+    <div class="section-sub">Manage matches, teams, players and users</div>
+
+    <!-- Stats -->
+    <div class="admin-grid">
+      <div class="admin-stat">
+        <div class="admin-stat-val">7</div>
+        <div class="admin-stat-lbl">Active Matches</div>
+        <div class="admin-stat-delta">↑ 2 today</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-val">48</div>
+        <div class="admin-stat-lbl">Total Bets</div>
+        <div class="admin-stat-delta">↑ 11 today</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-val">8</div>
+        <div class="admin-stat-lbl">Teams</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">40 players</div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-val">12</div>
+        <div class="admin-stat-lbl">Users</div>
+        <div class="admin-stat-delta">↑ 3 today</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Quick actions -->
+      <div class="card">
+        <div class="card-title">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn btn-gold" style="justify-content:center">+ Create Match</button>
+          <button class="btn btn-outline" style="justify-content:center">+ Create Team</button>
+          <button class="btn btn-outline" style="justify-content:center">+ Add Player</button>
+        </div>
+      </div>
+
+      <!-- Matches to manage -->
+      <div class="card">
+        <div class="card-title">Matches to Manage</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="flex-between" style="padding:10px;background:rgba(251,146,60,.08);border-radius:8px;border:1px solid rgba(251,146,60,.2)">
+            <div>
+              <div style="font-weight:700;font-size:13px">Chiefs vs Eagles</div>
+              <div class="tag">Ongoing · 21 — 17</div>
+            </div>
+            <span class="badge badge-ongoing"><span class="dot"></span>Live</span>
+          </div>
+          <div class="flex-between" style="padding:10px;background:rgba(255,255,255,.02);border-radius:8px;border:1px solid var(--border)">
+            <div>
+              <div style="font-weight:700;font-size:13px">49ers vs Cowboys</div>
+              <div class="tag">Starts at 21:00</div>
+            </div>
+            <a class="btn btn-gold" style="font-size:11px;padding:4px 10px">Start</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: LOGIN -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">STANIA BET</div>
+      <div class="auth-sub">Official Super Bowl Betting</div>
+      <h2>Sign In</h2>
+      <p>Enter your credentials to continue</p>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="john@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••">
+      </div>
+      <div style="text-align:right;margin-bottom:20px">
+        <a class="link-gold" style="font-size:12px">Forgot password?</a>
+      </div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:14px">Sign In</button>
+      <div class="text-center">No account yet? <a class="link-gold">Create one</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: SIGNUP -->
+<div id="page-signup" class="page">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">STANIA BET</div>
+      <div class="auth-sub">Official Super Bowl Betting</div>
+      <h2>Create Account</h2>
+      <p>Fill in the form to get started</p>
+      <div class="input-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label>First name</label>
+          <input type="text" placeholder="John">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Last name</label>
+          <input type="text" placeholder="Doe">
+        </div>
+      </div>
+      <div class="form-group mt-16">
+        <label>Email</label>
+        <input type="email" placeholder="john@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="Min. 8 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:14px">Create Account</button>
+      <div class="text-center">Already have an account? <a class="link-gold">Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: FLUTTER MOBILE -->
+<div id="page-mobile" class="page">
+  <div class="container" style="max-width:900px">
+    <div class="section-title" style="text-align:center;margin-bottom:4px">Flutter Mobile App</div>
+    <div class="section-sub" style="text-align:center;margin-bottom:36px">Dark navy + gold theme across all screens</div>
+
+    <div style="display:flex;gap:32px;justify-content:center;flex-wrap:wrap">
+
+      <!-- Login -->
+      <div>
+        <div style="text-align:center;color:var(--text-secondary);font-size:12px;margin-bottom:10px;font-weight:600">LOGIN</div>
+        <div class="mobile-frame" style="height:560px">
+          <div class="mobile-statusbar"><span>9:41</span><span>● ● ●</span></div>
+          <div class="mobile-body" style="display:flex;flex-direction:column;justify-content:center;padding:24px">
+            <div style="text-align:center;font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:4px;background:linear-gradient(90deg,var(--gold-400),var(--cyan-400));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px">STANIA BET</div>
+            <div style="text-align:center;font-size:10px;color:var(--text-secondary);letter-spacing:1px;margin-bottom:28px">SUPER BOWL BETTING</div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px">
+              <div style="font-weight:800;font-size:16px;margin-bottom:2px">Sign In</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:16px">Enter your credentials</div>
+              <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--text-secondary)">📧 Email</div>
+              <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--text-secondary)">🔒 Password</div>
+              <div style="background:var(--gold-500);border-radius:8px;padding:11px;text-align:center;font-weight:800;font-size:13px;color:var(--navy-900)">Sign In</div>
+              <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-secondary)">No account? <span style="color:var(--gold-400);font-weight:700">Create one</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Home -->
+      <div>
+        <div style="text-align:center;color:var(--text-secondary);font-size:12px;margin-bottom:10px;font-weight:600">MY BETS</div>
+        <div class="mobile-frame" style="height:560px">
+          <div class="mobile-statusbar"><span>9:41</span><span>● ● ●</span></div>
+          <div class="mobile-appbar" style="justify-content:space-between">
+            <span>My Bets</span>
+            <span style="font-size:18px">↺</span>
+          </div>
+          <div class="mobile-body">
+            <!-- Ongoing bet card -->
+            <div class="mobile-card" style="border-color:rgba(251,146,60,.4)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div class="mobile-team">Chiefs vs Eagles</div>
+                <span class="badge badge-ongoing" style="font-size:10px"><span class="dot"></span>Ongoing</span>
+              </div>
+              <div style="font-size:10px;color:var(--text-secondary);margin-bottom:8px">2026-05-20 · 18:00 — 21:00</div>
+              <div class="mobile-score">21 — 17</div>
+            </div>
+            <!-- Upcoming bet card -->
+            <div class="mobile-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div class="mobile-team">49ers vs Cowboys</div>
+                <span class="badge badge-scheduled" style="font-size:10px">Upcoming</span>
+              </div>
+              <div style="font-size:10px;color:var(--text-secondary)">2026-05-20 · 21:00 — 00:00</div>
+            </div>
+            <!-- Completed bet card -->
+            <div class="mobile-card" style="opacity:.65">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div class="mobile-team">Packers vs Bears</div>
+                <span class="badge badge-completed" style="font-size:10px">Completed</span>
+              </div>
+              <div style="font-size:10px;color:var(--text-secondary);margin-bottom:6px">2026-05-19</div>
+              <div class="mobile-score" style="font-size:18px;color:var(--text-secondary)">28 — 14</div>
+              <div style="text-align:center;font-weight:800;font-size:13px;color:var(--green);margin-top:4px">+€60.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail -->
+      <div>
+        <div style="text-align:center;color:var(--text-secondary);font-size:12px;margin-bottom:10px;font-weight:600">MATCH DETAIL</div>
+        <div class="mobile-frame" style="height:560px">
+          <div class="mobile-statusbar"><span>9:41</span><span>● ● ●</span></div>
+          <div class="mobile-appbar" style="gap:10px">
+            <span style="color:var(--text-secondary)">←</span>
+            <span style="font-size:13px">Chiefs vs Eagles</span>
+          </div>
+          <div class="mobile-body">
+            <!-- Status -->
+            <div style="text-align:center;margin-bottom:14px">
+              <span class="badge badge-ongoing"><span class="dot"></span>Match in Progress</span>
+            </div>
+            <!-- Score -->
+            <div style="background:var(--surface);border:1px solid rgba(245,158,11,.25);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
+              <div style="font-size:9px;letter-spacing:2px;color:var(--text-secondary);margin-bottom:10px">SCORE</div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+                <div style="font-size:11px;font-weight:700;text-align:right">Chiefs</div>
+                <div style="font-size:28px;font-weight:900;color:var(--gold-400);letter-spacing:3px">21 — 17</div>
+                <div style="font-size:11px;font-weight:700">Eagles</div>
+              </div>
+            </div>
+            <!-- Match info -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px">
+              <div style="font-size:10px;color:var(--gold-400);font-weight:700;margin-bottom:10px">MATCH INFO</div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px"><span style="color:var(--text-secondary)">Date</span><span>2026-05-20</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px"><span style="color:var(--text-secondary)">Start</span><span>18:00</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">End</span><span>21:00</span></div>
+            </div>
+            <!-- My bet -->
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px">
+              <div style="font-size:10px;color:var(--gold-400);font-weight:700;margin-bottom:10px">MY BET</div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px"><span style="color:var(--text-secondary)">Team chosen</span><span>Chiefs</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Stake</span><span>€50.00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ PAGE: DESKTOP APP -->
+<div id="page-desktop" class="page">
+  <div class="container">
+    <div class="section-title" style="text-align:center;margin-bottom:4px">Desktop App (tkinter)</div>
+    <div class="section-sub" style="text-align:center;margin-bottom:28px">Commentator tool — dark navy + gold theme</div>
+
+    <div class="desktop-frame">
+      <!-- Titlebar -->
+      <div class="desktop-titlebar">
+        <div class="dt-dot" style="background:#ff5f57"></div>
+        <div class="dt-dot" style="background:#febc2e"></div>
+        <div class="dt-dot" style="background:#28c840"></div>
+        <span style="flex:1;text-align:center;font-size:11px;color:var(--text-secondary)">Stania Bet — John Doe</span>
+      </div>
+      <!-- App header -->
+      <div class="desktop-header">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold-400)">STANIA BET</span>
+          <span style="font-size:11px;color:var(--text-secondary)">Desktop Application</span>
+        </div>
+        <span style="font-size:11px;color:var(--text-secondary)">Logged in as: John Doe</span>
+      </div>
+      <!-- Body -->
+      <div class="desktop-body">
+        <!-- Left: match list -->
+        <div class="desktop-left">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Today's Matches</div>
+          <div style="font-size:10px;color:var(--text-secondary);margin-bottom:12px">Tuesday, 20 May 2026</div>
+          <div class="dl-item active">● Chiefs vs Eagles   18:00</div>
+          <div class="dl-item">○ 49ers vs Cowboys   21:00</div>
+          <div class="dl-item">✓ Packers vs Bears   15:00</div>
+          <div style="position:absolute;bottom:16px;left:8px;right:8px">
+            <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:6px;padding:7px;text-align:center;font-size:11px;color:var(--cyan-400);cursor:pointer;font-weight:700">↺  Refresh</div>
+          </div>
+        </div>
+        <!-- Right: detail -->
+        <div class="desktop-right">
+          <div style="font-size:16px;font-weight:800;margin-bottom:2px">Kansas City Chiefs  vs  Philadelphia Eagles</div>
+          <div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:4px">● Ongoing</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-bottom:14px">Date: 2026-05-20 &nbsp;&nbsp; Start: 18:00 &nbsp;&nbsp; End: 21:00<br>Odds: Chiefs × 1.85 | Eagles × 2.10<br>Bets: 23 on Chiefs / 15 on Eagles</div>
+          <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
+          <!-- Score -->
+          <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px">
+            <div style="font-size:9px;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:8px;text-align:center">SCORE</div>
+            <div style="display:flex;align-items:center;gap:16px">
+              <span style="font-size:12px;color:var(--text-primary)">Chiefs:</span>
+              <div style="background:var(--navy-900);border:1px solid var(--border);border-radius:4px;padding:4px 12px;font-weight:900;color:var(--gold-400)">21</div>
+              <span style="color:var(--gold-400);font-size:18px;font-weight:900">—</span>
+              <span style="font-size:12px;color:var(--text-primary)">Eagles:</span>
+              <div style="background:var(--navy-900);border:1px solid var(--border);border-radius:4px;padding:4px 12px;font-weight:900;color:var(--gold-400)">17</div>
+            </div>
+          </div>
+          <!-- Commentary input -->
+          <div style="font-size:11px;font-weight:700;color:var(--gold-400);margin-bottom:6px">Add Commentary</div>
+          <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;color:var(--text-secondary);height:52px;margin-bottom:10px">Mahomes connects with Kelce for a 7-yard TD...</div>
+          <!-- Buttons -->
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <div style="background:#457b9d;color:var(--navy-900);font-size:11px;font-weight:700;padding:7px 12px;border-radius:6px;cursor:pointer">▶ Start Match</div>
+            <div style="background:var(--gold-500);color:var(--navy-900);font-size:11px;font-weight:700;padding:7px 12px;border-radius:6px;cursor:pointer">💬 Send Commentary</div>
+            <div style="background:var(--red);color:var(--navy-900);font-size:11px;font-weight:700;padding:7px 12px;border-radius:6px;cursor:pointer">■ Close Match</div>
+          </div>
+          <div style="height:1px;background:var(--border);margin-bottom:10px"></div>
+          <div style="font-size:11px;font-weight:700;color:var(--gold-400);margin-bottom:8px">Commentary & Score History</div>
+          <div style="background:var(--navy-700);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px;color:var(--text-secondary);height:80px;line-height:1.7">
+            Q3 — 2nd down: Mahomes finds Kelce in the end zone for a 7-yard touchdown pass. Chiefs extend their lead to 21-17...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.mockup-nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
